@@ -1,0 +1,12 @@
+root = true
+
+[*]
+charset = utf-8
+indent_style = space
+insert_final_newline = true
+
+[*.{!toml,!json,!yaml,!yml}]
+indent_size = 4
+
+[*.{toml,json,yaml,yml}]
+indent_size = 2
