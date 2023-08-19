@@ -1,4 +1,4 @@
-﻿namespace FutureValue.Models
+namespace FutureValue.Models
 {
     // It is somewhat similar to Django..
     // A new model
