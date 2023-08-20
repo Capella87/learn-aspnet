@@ -13,12 +13,21 @@ namespace FutureValue.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             ViewBag.Name = "Raphael";
-            ViewBag.FV = 99999.99;
+            ViewBag.FV = 123.45;
 
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Index(FutureValueModel model)
+        {
+            ViewBag.FV = model.CalculateFutureValue();
+
+            return View(model);
         }
 
         public IActionResult Privacy()
