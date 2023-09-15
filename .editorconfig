@@ -5,8 +5,8 @@ charset = utf-8
 indent_style = space
 insert_final_newline = true
 
-[*.{!toml,!json,!yaml,!yml}]
+[*.{cs,cshtml,html,htm,js,tsc,tsx,jsx}]
 indent_size = 4
 
-[*.{toml,json,yaml,yml}]
+[*.{toml,json,yaml,yml,css}]
 indent_size = 2
