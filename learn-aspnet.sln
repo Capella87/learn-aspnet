@@ -14,9 +14,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MovieList", "MovieList\MovieList.csproj", "{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalWebAPI", "MinimalWebAPI\MinimalWebAPI.csproj", "{4BAC1080-74B5-4165-A704-1EFE5D1EE1FA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalWebAPI", "MinimalWebAPI\MinimalWebAPI.csproj", "{4BAC1080-74B5-4165-A704-1EFE5D1EE1FA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,14 +32,6 @@ Global
 		{14CFA67A-F498-4869-B08E-A9195C5FE37C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{14CFA67A-F498-4869-B08E-A9195C5FE37C}.Release|x64.ActiveCfg = Release|x64
 		{14CFA67A-F498-4869-B08E-A9195C5FE37C}.Release|x64.Build.0 = Release|x64
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Debug|x64.Build.0 = Debug|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Release|x64.ActiveCfg = Release|Any CPU
-		{C7A9BCA8-7FF5-4D38-81BE-FAF1F20104AC}.Release|x64.Build.0 = Release|Any CPU
 		{4BAC1080-74B5-4165-A704-1EFE5D1EE1FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4BAC1080-74B5-4165-A704-1EFE5D1EE1FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BAC1080-74B5-4165-A704-1EFE5D1EE1FA}.Debug|x64.ActiveCfg = Debug|Any CPU
