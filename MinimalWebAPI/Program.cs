@@ -10,7 +10,10 @@ builder.Services.AddHttpLogging(opts =>
     opts.LoggingFields = HttpLoggingFields.RequestProperties);
 builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
 
+// WebApplication class is available in .NET 6 or later with modern ways.
 var app = builder.Build();
+
+app.UseHsts();
 
 if (app.Environment.IsDevelopment())
 {
@@ -18,9 +21,10 @@ if (app.Environment.IsDevelopment())
     app.UseHttpLogging();
 }
 
-app.UseHsts();
+app.UseStaticFiles();
+app.UseRouting();
 
-// Mapping endpoints (So routing middleware is added automatically in WebApplication.)
+// Defining endpoints
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/person", () => new Person("John", "Doe"));
 
