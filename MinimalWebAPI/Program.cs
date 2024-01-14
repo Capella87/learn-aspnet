@@ -20,6 +20,11 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseHttpLogging();
 }
+else
+{
+    // Exception handler for production. Does not leak sensitive information.
+    app.UseExceptionHandler("/error");
+}
 
 app.UseStaticFiles();
 app.UseRouting();
@@ -27,6 +32,7 @@ app.UseRouting();
 // Defining endpoints
 app.MapGet("/", () => "Hello World!");
 app.MapGet("/person", () => new Person("John", "Doe"));
+app.MapGet("/error", () => "Sorry, something went wrong!");
 
 app.Run();
 
