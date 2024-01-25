@@ -46,9 +46,51 @@ else
 app.UseStaticFiles();
 app.UseRouting();
 
+var people = new List<Person>()
+{
+    new("Linus", "Torvalds"),        // Inventor of Linux
+    new("Bill", "Joy"),              // Inventor of Vi and csh
+    new("Kilnam", "Chon"),           // The Contributor of TCP/IP and the Internet in Republic of Korea
+    new("Tim", "Berners-Lee"),       // Inventor of the World Wide Web
+    new("Ken", "Thompson"),          // Inventor of UNIX, Go, UTF-8, B, and Belle
+    new("Dennis", "Ritchie"),        // Inventor of C, UNIX, and B
+    new("Bjarne", "Stroustrup"),     // Inventor of C++
+    new("Anders", "Hejlsberg"),      // Inventor of C# and TypeScript
+    new("Douglas", "Engelbart"),     // Inventor of the computer mouse
+    new("Yukihiro", "Matsumoto"),    // Inventor of Ruby
+    new("Guido", "van Rossum"),      // Inventor of Python
+    new("James", "Gosling"),         // Inventor of Java
+    new("John", "Backus"),           // Inventor of FORTRAN
+    new("Grace", "Hopper"),          // Inventor of COBOL
+    new("Ada", "Lovelace"),          // The First programmer
+    new("Alan", "Turing"),           // Inventor of Turing Machine
+    new("Brandon", "Eich"),          // Inventor of JavaScript
+    new("Brian", "Kernighan"),       // Inventor of AWK
+    new("Richard", "Stallman"),      // Free Software Foundation
+    new("Larry", "Wall"),            // Inventor of Perl
+    new("Martin", "Odersky"),        // Inventor of Scala
+    new("Rasmus", "Lerdorf"),        // Inventor of PHP
+    new("Roberto", "Ierusalimschy"), // Inventor of Lua
+    new("Simon", "Peyton Jones"),    // Inventor of Haskell
+    new("Stephen", "Kleene"),        // Inventor of Regular Expression and Kleene's Recursion Theorem
+    new("Thomas", "Kurtz"),          // Inventor of BASIC
+    new("Maurice", "Wilkes"),        // Inventor of Microprogramming
+    new("Bram", "Moolenaar"),        // Developer of Vim
+    new("John", "McCarthy"),         // Inventor of LISP
+    new("Claude", "Shannon"),        // Inventor of Information Theory
+    new("Donald", "Knuth"),          // Inventor of TeX
+    new("Miguel", "de Icaza"),       // Inventor of GNOME and Mono
+    new("Matthias", "Ettrich"),      // Inventor of KDE
+    new("John", "von Neumann"),      // Inventor of von Neumann Architecture
+    new("Stephen", "Bourne"),        // Inventor of Bourne Shell
+    new("Mitchell", "Baker"),        // Founder of Mozilla Foundation
+    new("Brewster", "Kahle"),        // Founder of Internet Archive
+};
+
 // Defining endpoints
 app.MapGet("/", () => "Hello World!");
-app.MapGet("/person", () => new Person("John", "Doe"));
+// Search and return people whose first name starts with the given name
+app.MapGet("/person/{name}", (string name) => people.Where(p => p.FirstName.StartsWith(name)));
 app.MapGet("/error", () => "Sorry, something went wrong!");
 
 app.Run();
