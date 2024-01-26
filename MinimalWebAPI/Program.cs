@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.HttpLogging;
 
 // Create a 'builder' prior to creating WebApplication object for configuration.
@@ -20,6 +21,9 @@ builder.WebHost.ConfigureKestrel((context, options) =>
 builder.Services.AddHttpLogging(opts =>
     opts.LoggingFields = HttpLoggingFields.RequestProperties);
 builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
+
+// Should NOT be set in production
+builder.Environment.EnvironmentName = "Development";
 
 // WebApplication class is available in .NET 6 or later with modern ways.
 var app = builder.Build();
