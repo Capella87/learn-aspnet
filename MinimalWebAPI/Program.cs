@@ -91,12 +91,58 @@ var people = new List<Person>()
     new("Brewster", "Kahle"),        // Founder of Internet Archive
 };
 
+
 // Defining endpoints
 app.MapGet("/", () => "Hello World!");
 // Search and return people whose first name starts with the given name
 app.MapGet("/person/{name}", (string name) => people.Where(p => p.FirstName.StartsWith(name)));
 app.MapGet("/error", () => "Sorry, something went wrong!");
 
+// Lambda expression
+app.MapGet("/fruit", () => Fruit.All);
+
+// Func; A Generic Delegate type
+var getFruit = (string id) => Fruit.All[id];
+
+// Define fruit-related endpoints
+app.MapGet("/fruit/{id}", getFruit);
+app.MapPost("/fruit/{id}", Handlers.AddFruit); // Can be static
+
+// Handlers (arbitrary class in this code) object to handle.
+// Thus, handler for request can be both static and instantiated.
+Handlers handlers = new(); // Can be instantiated.
+app.MapPut("/fruit/{id}", handlers.ReplaceFruit);
+
+app.MapDelete("/fruit/{id}", DeleteFruit); // Use local function feature.
+
 app.Run();
 
+// Local function
+void DeleteFruit(string id)
+{
+    Fruit.All.Remove(id);
+}
+
+// Data Model definitions
 public record Person(string FirstName, string LastName);
+
+record struct Fruit(string Name, int Stock)
+{
+    public static readonly Dictionary<string, Fruit> All = new();
+};
+
+// Handlers (arbitrary class) definition
+class Handlers
+{
+    // Handlers can also be instant methods
+    public void ReplaceFruit(string id, Fruit fruit)
+    {
+        Fruit.All[id] = fruit;
+    }
+
+    // Add data and convert the response to a JsonObject
+    public static void AddFruit(string id, Fruit fruit)
+    {
+        Fruit.All.Add(id, fruit);
+    }
+}
