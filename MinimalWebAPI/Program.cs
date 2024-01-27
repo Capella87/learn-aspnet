@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.HttpLogging;
+using System.Collections.Concurrent;
 
 // Create a 'builder' prior to creating WebApplication object for configuration.
 var builder = WebApplication.CreateBuilder(args);
@@ -91,6 +92,8 @@ var people = new List<Person>()
     new("Brewster", "Kahle"),        // Founder of Internet Archive
 };
 
+// Thread-Safe dictionary
+var _fruit = new ConcurrentDictionary<string, Fruit>();
 
 // Defining endpoints
 app.MapGet("/", () => "Hello World!");
@@ -99,50 +102,34 @@ app.MapGet("/person/{name}", (string name) => people.Where(p => p.FirstName.Star
 app.MapGet("/error", () => "Sorry, something went wrong!");
 
 // Lambda expression
-app.MapGet("/fruit", () => Fruit.All);
-
-// Func; A Generic Delegate type
-var getFruit = (string id) => Fruit.All[id];
+app.MapGet("/fruit", () => _fruit);
 
 // Define fruit-related endpoints
-app.MapGet("/fruit/{id}", getFruit);
-app.MapPost("/fruit/{id}", Handlers.AddFruit); // Can be static
+app.MapGet("/fruit/{id}", (string id) =>
+        _fruit.TryGetValue(id, out var fruit)
+        ? TypedResults.Ok(fruit)
+        : Results.NotFound());
+app.MapPost("/fruit/{id}", (string id, Fruit fruit) =>
+        _fruit.TryAdd(id, fruit)
+        ? TypedResults.Created($"/fruit/{id}", fruit)
+        : Results.BadRequest(new { id = "A fruit with this id is already exist" }));
 
-// Handlers (arbitrary class in this code) object to handle.
-// Thus, handler for request can be both static and instantiated.
-Handlers handlers = new(); // Can be instantiated.
-app.MapPut("/fruit/{id}", handlers.ReplaceFruit);
+// Handler for request can be both static and instantiated.
+app.MapPut("/fruit/{id}", (string id, Fruit fruit) =>
+{
+    _fruit[id] = fruit;
+    return Results.NoContent();
+});
 
-app.MapDelete("/fruit/{id}", DeleteFruit); // Use local function feature.
+app.MapDelete("/fruit/{id}", (string id) =>
+{
+    _fruit.TryRemove(id, out _);
+    return Results.NoContent(); // 204 NO CONTENT : Server has successfully processed and not returning any content.
+});
 
 app.Run();
-
-// Local function
-void DeleteFruit(string id)
-{
-    Fruit.All.Remove(id);
-}
 
 // Data Model definitions
 public record Person(string FirstName, string LastName);
 
-record struct Fruit(string Name, int Stock)
-{
-    public static readonly Dictionary<string, Fruit> All = new();
-};
-
-// Handlers (arbitrary class) definition
-class Handlers
-{
-    // Handlers can also be instant methods
-    public void ReplaceFruit(string id, Fruit fruit)
-    {
-        Fruit.All[id] = fruit;
-    }
-
-    // Add data and convert the response to a JsonObject
-    public static void AddFruit(string id, Fruit fruit)
-    {
-        Fruit.All.Add(id, fruit);
-    }
-}
+record struct Fruit(string Name, int Stock);
