@@ -117,11 +117,20 @@ app.MapGet("/fruit", () => _fruit);
 app.MapGet("/fruit/{id}", (string id) =>
         _fruit.TryGetValue(id, out var fruit)
         ? TypedResults.Ok(fruit)
-        : Results.NotFound());
+        // Methods such as Results.NotFound() provides default responses.
+        : Results.Problem(statusCode: 404));
+// Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
+// The former returns 500 Internal Server Error in default.
+// The latter returns 400 Bad Request and requires passing something to validation error dictionary.
+// The dictionary enumerates errors in response.
+
 app.MapPost("/fruit/{id}", (string id, Fruit fruit) =>
         _fruit.TryAdd(id, fruit)
         ? TypedResults.Created($"/fruit/{id}", fruit)
-        : Results.BadRequest(new { id = "A fruit with this id is already exist" }));
+        : Results.ValidationProblem(new Dictionary<string, string[]>
+        {
+            {"id", new[] {"A fruit with this id already exists"} }
+        }));
 
 // Handler for request can be both static and instantiated.
 app.MapPut("/fruit/{id}", (string id, Fruit fruit) =>
