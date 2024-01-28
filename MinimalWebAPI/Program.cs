@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.HttpLogging;
 using System.Collections.Concurrent;
+using System.Net.Mime;
 
 // Create a 'builder' prior to creating WebApplication object for configuration.
 var builder = WebApplication.CreateBuilder(args);
@@ -73,7 +74,7 @@ var people = new List<Person>()
     new("Brian", "Kernighan"),       // Inventor of AWK
     new("Richard", "Stallman"),      // Free Software Foundation
     new("Larry", "Wall"),            // Inventor of Perl
-    new("Martin", "Odersky"),        // Inventor of Scala
+    new("Martin", "Odersky"),        // Inventor of Scalaxc
     new("Rasmus", "Lerdorf"),        // Inventor of PHP
     new("Roberto", "Ierusalimschy"), // Inventor of Lua
     new("Simon", "Peyton Jones"),    // Inventor of Haskell
@@ -100,6 +101,14 @@ app.MapGet("/", () => "Hello World!");
 // Search and return people whose first name starts with the given name
 app.MapGet("/person/{name}", (string name) => people.Where(p => p.FirstName.StartsWith(name)));
 app.MapGet("/error", () => "Sorry, something went wrong!");
+
+app.MapGet("/teapot", (HttpResponse response) =>
+{
+    response.StatusCode = 418;
+    response.ContentType = MediaTypeNames.Text.Plain;
+
+    return response.WriteAsync("I'm a teapot!");
+});
 
 // Lambda expression
 app.MapGet("/fruit", () => _fruit);
