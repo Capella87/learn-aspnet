@@ -149,13 +149,13 @@ app.MapPost("/fruit/{id}", (string id, Fruit fruit) =>
 app.MapPut("/fruit/{id}", (string id, Fruit fruit) =>
 {
     _fruit[id] = fruit;
-    return Results.NoContent();
+    return TypedResults.NoContent();
 });
 
 app.MapDelete("/fruit/{id}", (string id) =>
 {
     _fruit.TryRemove(id, out _);
-    return Results.NoContent(); // 204 NO CONTENT : Server has successfully processed and not returning any content.
+    return TypedResults.NoContent(); // 204 NO CONTENT : Server has successfully processed and not returning any content.
 });
 
 app.Run();
