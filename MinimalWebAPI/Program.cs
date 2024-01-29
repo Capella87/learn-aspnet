@@ -24,8 +24,15 @@ builder.Services.AddHttpLogging(opts =>
     opts.LoggingFields = HttpLoggingFields.RequestProperties);
 builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
 
+// Add Problem Details for Exception Middleware
+// AddProblemDetails is adding an implementation of IProblemDetailsService
+// In default, ProblemDetails responds exception in two ways,
+// If the request user is available to render HTML, it returns exception page with HTML formatted instead of Problem details.
+// If not, it returns Problem details as IETF standardized.
+builder.Services.AddProblemDetails();
+
 // Should NOT be set in production
-builder.Environment.EnvironmentName = "Development";
+// builder.Environment.EnvironmentName = "Development";
 
 // WebApplication class is available in .NET 6 or later with modern ways.
 var app = builder.Build();
@@ -46,7 +53,7 @@ else
     // It changes the response path to /error and sends the request down the middleware pipeline again.
     // The pipeline executes the new error path and a response as usual.
     // The exception handler middleware updates the new response's status code to 500.
-    app.UseExceptionHandler("/error");
+    app.UseExceptionHandler();
 }
 
 app.UseStaticFiles();
@@ -110,6 +117,7 @@ app.MapGet("/teapot", (HttpResponse response) =>
     return response.WriteAsync("I'm a teapot!");
 });
 
+app.MapGet("/excpt", void () => throw new Exception("Test Exception for learning."));
 // Lambda expression
 app.MapGet("/fruit", () => _fruit);
 
