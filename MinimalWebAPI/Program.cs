@@ -56,6 +56,9 @@ else
     app.UseExceptionHandler();
 }
 
+// Enable to return error response with problem details in non-exception errors
+app.UseStatusCodePages();
+
 app.UseStaticFiles();
 app.UseRouting();
 
@@ -118,6 +121,8 @@ app.MapGet("/teapot", (HttpResponse response) =>
 });
 
 app.MapGet("/excpt", void () => throw new Exception("Test Exception for learning."));
+app.MapGet("/nonexcpt", () => Results.NotFound());
+
 // Lambda expression
 app.MapGet("/fruit", () => _fruit);
 
