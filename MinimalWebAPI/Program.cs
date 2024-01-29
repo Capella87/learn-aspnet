@@ -128,10 +128,21 @@ app.MapGet("/fruit", () => _fruit);
 
 // Define fruit-related endpoints
 app.MapGet("/fruit/{id}", (string id) =>
-        _fruit.TryGetValue(id, out var fruit)
-        ? TypedResults.Ok(fruit)
-        // Methods such as Results.NotFound() provides default responses.
-        : Results.Problem(statusCode: 404));
+{
+    // Endpoint level filter
+    if (string.IsNullOrEmpty(id) || !id.StartsWith('f'))
+    {
+        return Results.ValidationProblem(new Dictionary<string, string[]>
+        {
+            {"id", new[] {"Invalid format. Id must start with 'f'"}}
+        });
+    }
+
+    return _fruit.TryGetValue(id, out var fruit)
+    ? TypedResults.Ok(fruit)
+    // Methods such as Results.NotFound() provides default responses.
+    : Results.Problem(statusCode: 404);
+});
 // Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
 // The former returns 500 Internal Server Error in default.
 // The latter returns 400 Bad Request and requires passing something to validation error dictionary.
