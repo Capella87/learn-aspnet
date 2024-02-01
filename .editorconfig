@@ -10,3 +10,4 @@ indent_size = 4
 
 [*.{toml,json,yaml,yml,css}]
 indent_size = 2
+insert_final_newline = false
