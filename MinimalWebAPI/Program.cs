@@ -128,21 +128,14 @@ app.MapGet("/fruit", () => _fruit);
 
 // Define fruit-related endpoints
 app.MapGet("/fruit/{id}", (string id) =>
-{
-    // Endpoint level filter
-    if (string.IsNullOrEmpty(id) || !id.StartsWith('f'))
-    {
-        return Results.ValidationProblem(new Dictionary<string, string[]>
-        {
-            {"id", new[] {"Invalid format. Id must start with 'f'"}}
-        });
-    }
+    _fruit.TryGetValue(id, out var fruit)
+        ? TypedResults.Ok(fruit)
+        // Methods such as Results.NotFound() provides default responses.
+        : Results.Problem(statusCode: 404))
 
-    return _fruit.TryGetValue(id, out var fruit)
-    ? TypedResults.Ok(fruit)
-    // Methods such as Results.NotFound() provides default responses.
-    : Results.Problem(statusCode: 404);
-});
+    // Add Endpoint-level filter; Likes an onion!
+    .AddEndpointFilter(ValidationHelper.ValidateId);
+
 // Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
 // The former returns 500 Internal Server Error in default.
 // The latter returns 400 Bad Request and requires passing something to validation error dictionary.
@@ -175,3 +168,26 @@ app.Run();
 public record Person(string FirstName, string LastName);
 
 record struct Fruit(string Name, int Stock);
+
+class ValidationHelper
+{
+    internal static async ValueTask<object?> ValidateId(EndpointFilterInvocationContext context,
+        EndpointFilterDelegate next) // Second one is the next endpoint filter or endpoint middleware. It is a delegate type.
+    {
+        // Retrieve the method arguments from the context
+        var id = context.GetArgument<string>(0);
+
+        // Return error response if filtered
+        if (string.IsNullOrEmpty(id) || !id.StartsWith('f'))
+        {
+            return Results.ValidationProblem(
+                new Dictionary<string, string[]>
+                {
+                    {"id", new[]{"Invalid format. Id must start with 'f'"}}
+                });
+        }
+
+        // Invoke next one if there's no trouble.
+        return await next(context);
+    }
+}
