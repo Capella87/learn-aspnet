@@ -134,7 +134,17 @@ app.MapGet("/fruit/{id}", (string id) =>
         : Results.Problem(statusCode: 404))
 
     // Add Endpoint-level filter; Likes an onion!
-    .AddEndpointFilter(ValidationHelper.ValidateId);
+    .AddEndpointFilter(ValidationHelper.ValidateId)
+    
+    // Another one; Just printing log information
+    .AddEndpointFilter(async (context, next) =>
+     {
+         app.Logger.LogInformation("Executing filter...");
+         object? result = await next(context);
+
+         app.Logger.LogInformation($"Handler result: {result}");
+         return result;
+     });
 
 // Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
 // The former returns 500 Internal Server Error in default.
