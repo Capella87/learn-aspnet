@@ -133,7 +133,7 @@ app.MapGet("/fruit/{id}", (string id) =>
         // Methods such as Results.NotFound() provides default responses.
         : Results.Problem(statusCode: 404))
     // Replace to factory method to generalize adding endpoint filters. It does not care about such as order or type of parameters
-    .AddEndpointFilterFactory(ValidationHelper.ValidateIdFactory);
+    .AddEndpointFilter<IdValidationFilter>();
 
 // Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
 // The former returns 500 Internal Server Error in default.
