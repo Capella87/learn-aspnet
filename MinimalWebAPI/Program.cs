@@ -132,19 +132,8 @@ app.MapGet("/fruit/{id}", (string id) =>
         ? TypedResults.Ok(fruit)
         // Methods such as Results.NotFound() provides default responses.
         : Results.Problem(statusCode: 404))
-
-    // Add Endpoint-level filter; Likes an onion!
-    .AddEndpointFilter(ValidationHelper.ValidateId)
-    
-    // Another one; Just printing log information
-    .AddEndpointFilter(async (context, next) =>
-     {
-         app.Logger.LogInformation("Executing filter...");
-         object? result = await next(context);
-
-         app.Logger.LogInformation($"Handler result: {result}");
-         return result;
-     });
+    // Replace to factory method to generalize adding endpoint filters. It does not care about such as order or type of parameters
+    .AddEndpointFilterFactory(ValidationHelper.ValidateIdFactory);
 
 // Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
 // The former returns 500 Internal Server Error in default.
@@ -157,7 +146,8 @@ app.MapPost("/fruit/{id}", (string id, Fruit fruit) =>
         : Results.ValidationProblem(new Dictionary<string, string[]>
         {
             {"id", new[] {"A fruit with this id already exists"} }
-        }));
+        }))
+    .AddEndpointFilterFactory(ValidationHelper.ValidateIdFactory);
 
 // Handler for request can be both static and instantiated.
 app.MapPut("/fruit/{id}", (string id, Fruit fruit) =>
@@ -178,26 +168,3 @@ app.Run();
 public record Person(string FirstName, string LastName);
 
 record struct Fruit(string Name, int Stock);
-
-class ValidationHelper
-{
-    internal static async ValueTask<object?> ValidateId(EndpointFilterInvocationContext context,
-        EndpointFilterDelegate next) // Second one is the next endpoint filter or endpoint middleware. It is a delegate type.
-    {
-        // Retrieve the method arguments from the context
-        var id = context.GetArgument<string>(0);
-
-        // Return error response if filtered
-        if (string.IsNullOrEmpty(id) || !id.StartsWith('f'))
-        {
-            return Results.ValidationProblem(
-                new Dictionary<string, string[]>
-                {
-                    {"id", new[]{"Invalid format. Id must start with 'f'"}}
-                });
-        }
-
-        // Invoke next one if there's no trouble.
-        return await next(context);
-    }
-}
