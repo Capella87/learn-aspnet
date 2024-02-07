@@ -38,6 +38,7 @@ builder.Services.AddProblemDetails();
 var app = builder.Build();
 
 app.UseHsts();
+app.UseHttpsRedirection();
 app.UseHttpLogging();
 
 if (app.Environment.IsDevelopment())
