@@ -17,6 +17,9 @@ builder.WebHost.ConfigureKestrel((context, options) =>
     });
 });
 
+// Services
+builder.Services.AddAntiforgery();
+
 // Middlewares
 
 // Use development environment logging; Not to be used in production
@@ -40,6 +43,7 @@ var app = builder.Build();
 app.UseHsts();
 app.UseHttpsRedirection();
 app.UseHttpLogging();
+app.UseAntiforgery();
 
 if (app.Environment.IsDevelopment())
 {
