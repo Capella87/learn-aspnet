@@ -103,8 +103,9 @@ var people = new List<Person>()
     new("Brewster", "Kahle"),        // Founder of Internet Archive
 };
 
-// Thread-Safe dictionary
+// Thread-Safe dictionaries
 var _fruit = new ConcurrentDictionary<string, Fruit>();
+var _city = new ConcurrentDictionary<string,  City>();
 
 // Defining endpoints
 app.MapGet("/", () => "Hello World!");
@@ -163,9 +164,33 @@ app.MapDelete("/fruit/{id}", (string id) =>
     return TypedResults.NoContent(); // 204 NO CONTENT : Server has successfully processed and not returning any content.
 });
 
+
+// Using Route Groups
+
+RouteGroupBuilder cityApi = app.MapGroup("/city");
+
+cityApi.MapGet("/", () => _city);
+
+RouteGroupBuilder cityApiWithValidation = cityApi.MapGroup("/");
+
+cityApiWithValidation.MapGet("/{id}", (string id) =>
+    _city.TryGetValue(id, out var city)
+    ? TypedResults.Ok(city)
+    : Results.Problem(statusCode: 404));
+
+cityApiWithValidation.MapPost("/{id}", (string id, City city) =>
+        _city.TryAdd(id, city)
+        ? TypedResults.Created($"/city/{id}", city)
+        : Results.ValidationProblem(new Dictionary<string, string[]>
+        {
+            {"id", new[] {"A city with this id already exists"} }
+        }));
+
 app.Run();
 
 // Data Model definitions
 public record Person(string FirstName, string LastName);
 
 record struct Fruit(string Name, int Stock);
+
+record struct City(string Name, int Population, string LocalNumber);
