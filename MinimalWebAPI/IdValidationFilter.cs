@@ -10,7 +10,7 @@ public class IdValidationFilter : IEndpointFilter
             return Results.ValidationProblem(
                 new Dictionary<string, string[]>
                 {
-                    {"id", new[]{"Invalid format. Id must start with 'f'"}}
+                    {"id", new[] {"Invalid format. Id must start with 'f'"}}
                 });
         }
 

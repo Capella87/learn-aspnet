@@ -132,7 +132,7 @@ app.MapGet("/fruit/{id}", (string id) =>
         ? TypedResults.Ok(fruit)
         // Methods such as Results.NotFound() provides default responses.
         : Results.Problem(statusCode: 404))
-    // Replace to factory method to generalize adding endpoint filters. It does not care about such as order or type of parameters
+    // Use AddEndpointFilter again for IdValidationFilter which implements IEndpointFilter for convenience.
     .AddEndpointFilter<IdValidationFilter>();
 
 // Results.Problem() and Results.ValidationProblem() are both returning problem details JSON format.
@@ -147,6 +147,7 @@ app.MapPost("/fruit/{id}", (string id, Fruit fruit) =>
         {
             {"id", new[] {"A fruit with this id already exists"} }
         }))
+    // Replace to factory method to generalize adding endpoint filters. It does not care about such as order or type of parameters
     .AddEndpointFilterFactory(ValidationHelper.ValidateIdFactory);
 
 // Handler for request can be both static and instantiated.
