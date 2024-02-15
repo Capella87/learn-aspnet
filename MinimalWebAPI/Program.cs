@@ -34,6 +34,10 @@ builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
 // If not, it returns Problem details as IETF standardized.
 builder.Services.AddProblemDetails();
 
+// Add Health-Check middleware and Razor pages
+builder.Services.AddHealthChecks();
+builder.Services.AddRazorPages();
+
 // Should NOT be set in production
 // builder.Environment.EnvironmentName = "Development";
 
@@ -169,6 +173,11 @@ app.MapDelete("/fruit/{id}", (string id) =>
     return TypedResults.NoContent(); // 204 NO CONTENT : Server has successfully processed and not returning any content.
 });
 
+// Register Health-Check Middleware as /health
+app.MapHealthChecks("health");
+
+// Register all the Razor Pages as endpoints
+app.MapRazorPages();
 
 // Using Route Groups
 
