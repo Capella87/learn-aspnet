@@ -15,6 +15,14 @@ builder.WebHost.ConfigureKestrel((context, options) =>
 
 // Services
 
+// Add routing options regarding URL-case, trailing slash and query string case.
+builder.Services.Configure<RouteOptions>(o =>
+{
+    o.LowercaseUrls = true;
+    o.AppendTrailingSlash = true;
+    o.LowercaseQueryStrings = false;
+});
+
 builder.Services.AddAntiforgery();
 
 // Use development environment logging; Not to be used in production
@@ -23,6 +31,7 @@ builder.Services.AddHttpLogging(opts =>
 builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
 builder.Services.AddProblemDetails();
 builder.Services.AddRazorPages();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -36,13 +45,21 @@ app.UseExceptionHandler();
 
 // Routing
 
-// We can use WithName for reference
-app.MapGet("/", () => "Hello 🌏")
-    .WithName("hello");
+app.MapGet("/HealthCheck", () => Results.Ok()).WithName("healthcheck");
+app.MapGet("/{name}", (string name) => name).WithName("product");
 
+// We can use WithName for reference
+app.MapGet("/", (LinkGenerator links) =>
+new[]
+{
+    links.GetPathByName("healthcheck"),
+    links.GetPathByName("product", new { Name = "Big-Widget", Q = "Test" })
+})
+    .WithName("home");
+
+// Literal segments are not case-sensitive.
 // Endpoint names are case-sensitive, but route templates (URL) are NOT case-sensitive.
-app.MapGet("/product/{name}", (string name) => $"The product is {name}")
-            .WithName("product"); // Add name metadata
+// But in URL generation, we need to set rules whether sensitive to case or not.
 // LinkGenerator can create an URL to endpoint.
 app.MapGet("/links", (LinkGenerator links) =>
 {
