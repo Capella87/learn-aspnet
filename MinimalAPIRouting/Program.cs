@@ -58,4 +58,7 @@ app.MapGet("/links", (LinkGenerator links) =>
 // But we can permanent and preserveMethod parameters to change response code.
 app.MapGet("/redirect", () => Results.RedirectToRoute("hello"));
 
+// Results.Redirect() takes a URL instead of route name instead
+app.MapGet("/redirect2", () => Results.Redirect("/"));
+
 app.Run();
