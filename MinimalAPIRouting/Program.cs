@@ -52,7 +52,13 @@ app.MapGet("/{name}", (string name) => name).WithName("product");
 app.MapGet("/", (LinkGenerator links) =>
 new[]
 {
-    links.GetPathByName("healthcheck"),
+    // Override RouteOptions by LinkOptions for purposes such as legacy support
+    links.GetPathByName("healthcheck",
+        options: new LinkOptions
+        {
+            LowercaseUrls = false,
+            AppendTrailingSlash = false,
+        }),
     links.GetPathByName("product", new { Name = "Big-Widget", Q = "Test" })
 })
     .WithName("home");
