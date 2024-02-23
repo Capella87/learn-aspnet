@@ -41,7 +41,14 @@ app.UseHttpLogging();
 app.UseAntiforgery();
 
 app.UseStatusCodePages();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
+{
 app.UseExceptionHandler();
+}
 
 // Routing
 
