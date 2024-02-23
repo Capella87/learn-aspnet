@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpLogging;
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,13 +48,18 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-app.UseExceptionHandler();
+    app.UseExceptionHandler();
 }
 
 // Routing
 
 app.MapGet("/HealthCheck", () => Results.Ok()).WithName("healthcheck");
-app.MapGet("/{name}", (string name) => name).WithName("product");
+app.MapGet("/products/{id}/paged",
+    ([FromRoute] int id,
+    [FromQuery] int page,
+    [FromHeader(Name = "PageSize")] int pageSize)
+    => $"Received id {id}, page {page}, pageSize {pageSize}");
+app.MapGet("/legacy/{name}", (string name) => name).WithName("prod");
 
 // We can use WithName for reference
 app.MapGet("/", (LinkGenerator links) =>
@@ -66,7 +72,7 @@ new[]
             LowercaseUrls = false,
             AppendTrailingSlash = false,
         }),
-    links.GetPathByName("product", new { Name = "Big-Widget", Q = "Test" })
+    links.GetPathByName("prod", new { Name = "Big-Widget", Q = "Test" })
 })
     .WithName("home");
 
@@ -77,7 +83,7 @@ new[]
 app.MapGet("/links", (LinkGenerator links) =>
 {
     // Create a link dynamically (in runtime)
-    string link = links.GetPathByName("product",
+    string link = links.GetPathByName("prod",
         new { name = "big-widget" });
 
     return $"View the project at {link}";
@@ -86,7 +92,7 @@ app.MapGet("/links", (LinkGenerator links) =>
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
 // Results.RedirectToRoute returns 302 Found response code in default,
 // But we can permanent and preserveMethod parameters to change response code.
-app.MapGet("/redirect", () => Results.RedirectToRoute("hello"));
+app.MapGet("/redirect", () => Results.RedirectToRoute("home"));
 
 // Results.Redirect() takes a URL instead of route name instead
 app.MapGet("/redirect2", () => Results.Redirect("/"));
