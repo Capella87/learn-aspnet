@@ -54,6 +54,11 @@ else
 // Routing
 
 app.MapGet("/HealthCheck", () => Results.Ok()).WithName("healthcheck");
+
+// ASP.NET Core binds handler from routing information in default,
+// if there's no keyword exist, it tries to bind to query.
+// However, it does not try to bind to header unless using attributes.
+// But we can explicitly force them to bind to routing, query and so on with attributes (From* family)
 app.MapGet("/products/{id}/paged",
     ([FromRoute] int id,
     [FromQuery] int page,
@@ -89,6 +94,8 @@ app.MapGet("/links", (LinkGenerator links) =>
     return $"View the project at {link}";
 });
 
+app.MapPost("/product", (Product product) => $"Received {product}");
+
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
 // Results.RedirectToRoute returns 302 Found response code in default,
 // But we can permanent and preserveMethod parameters to change response code.
@@ -98,3 +105,22 @@ app.MapGet("/redirect", () => Results.RedirectToRoute("home"));
 app.MapGet("/redirect2", () => Results.Redirect("/"));
 
 app.Run();
+
+// Implements custom type binding with TryParse implementation
+readonly record struct ProductId(int Id)
+{
+    public static bool TryParse(string? s, out ProductId result)
+    {
+        if (s is not null && s.StartsWith('p')
+            && int.TryParse(s.AsSpan().Slice(1), out int Id))
+        {
+            result = new ProductId(Id);
+            return true;
+        }
+
+        result = default; // Set result value as default value.
+        return false;
+    }
+}
+
+record Product(int Id, string Name, int Stock);
