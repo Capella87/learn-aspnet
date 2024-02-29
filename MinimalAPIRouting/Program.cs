@@ -109,6 +109,11 @@ app.MapPost("/product", (Product product) => $"Received {product}"); // With JSO
 app.MapGet("products/search", 
     ([FromQuery(Name = "id")] int[] id) => $"Received {id.Length} ids"); // Getting id from query.
 
+// Optional parameter
+app.MapGet("/stock/{id?}", (int? id) => $"Received stock {id} (From route)");
+app.MapGet("/stock2", (int? id) => $"Received stock {id} (From query)");
+app.MapPost("/stock", (Product? product) => $"Received {product} (From request body)");
+
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
 // Results.RedirectToRoute returns 302 Found response code in default,
 // But we can permanent and preserveMethod parameters to change response code.
