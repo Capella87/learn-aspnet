@@ -103,6 +103,7 @@ app.MapGet("/links", (LinkGenerator links) =>
     return $"View the project at {link}";
 });
 
+app.MapGet("/product/{id}", (ProductId id) => $"Received {id}");
 app.MapPost("/product", (Product product) => $"Received {product}");
 
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
