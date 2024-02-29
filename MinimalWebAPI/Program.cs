@@ -110,6 +110,7 @@ var people = new List<Person>()
     new("Stephen", "Bourne"),        // Inventor of Bourne Shell
     new("Mitchell", "Baker"),        // Founder of Mozilla Foundation
     new("Brewster", "Kahle"),        // Founder of Internet Archive
+    new("Niklaus", "Wirth"),         // Inventor of Pascal language
 };
 
 // Thread-Safe dictionaries
