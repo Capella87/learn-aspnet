@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.HttpLogging;
 using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,14 @@ builder.Services.Configure<RouteOptions>(o =>
     o.LowercaseUrls = true;
     o.AppendTrailingSlash = true;
     o.LowercaseQueryStrings = false;
+});
+
+// Add JSON binding configurations such as extra trailing comma at the end of object..
+builder.Services.ConfigureHttpJsonOptions(o =>
+{
+    o.SerializerOptions.AllowTrailingCommas = false;
+    o.SerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+    o.SerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
 builder.Services.AddAntiforgery();
