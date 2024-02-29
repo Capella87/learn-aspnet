@@ -68,7 +68,7 @@ app.MapGet("/HealthCheck", () => Results.Ok()).WithName("healthcheck");
 // if there's no keyword exist, it tries to bind to query.
 // However, it does not try to bind to header unless using attributes.
 // But we can explicitly force them to bind to routing, query and so on with attributes (From* family)
-app.MapGet("/products/{id}/paged",
+app.MapGet("/legacy/products/{id}/paged",
     ([FromRoute] int id,
     [FromQuery] int page,
     [FromHeader(Name = "PageSize")] int pageSize)
@@ -103,8 +103,11 @@ app.MapGet("/links", (LinkGenerator links) =>
     return $"View the project at {link}";
 });
 
-app.MapGet("/product/{id}", (ProductId id) => $"Received {id}");
-app.MapPost("/product", (Product product) => $"Received {product}");
+// Array as a parameter; valid only if the HTTP verb does not include request body
+app.MapGet("/product/{id}", (ProductId id) => $"Received {id}");     // With route
+app.MapPost("/product", (Product product) => $"Received {product}"); // With JSON request body
+app.MapGet("products/search", 
+    ([FromQuery(Name = "id")] int[] id) => $"Received {id.Length} ids"); // Getting id from query.
 
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
 // Results.RedirectToRoute returns 302 Found response code in default,
