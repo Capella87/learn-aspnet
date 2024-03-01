@@ -118,6 +118,25 @@ app.MapPost("/stock", (Product? product) => $"Received {product} (From request b
 // Optional parameter with default value
 app.MapGet("/stock", StockWithDefaultValue);
 
+// File upload with IFormFile (single file) and IFormCollection (multiple files)
+// Fit for small size files
+// We should consider security for preventing malicious file attacks
+/*
+app.MapPost("/upload", (IFormFileCollection files) =>
+{
+    foreach (IFormFile file in files)
+    {
+
+    }
+});
+*/
+
+// Custom binding implementation with BindAsync
+// BindAsync includes HttpContext as a parameter and ParameterInfo for reflection..
+// We can fully customize binding than TryParse (They're for string parameter or something simple type)
+app.MapPost("/sizes", (SizeDetails size) => $"Received {size}");
+
+
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
 // Results.RedirectToRoute returns 302 Found response code in default,
 // But we can permanent and preserveMethod parameters to change response code.
@@ -151,3 +170,30 @@ readonly record struct ProductId(int Id)
 }
 
 record Product(int Id, string Name, int Stock);
+
+// BindAsync for customization in depth 
+public record class SizeDetails(double height, double width)
+{
+    public static async ValueTask<SizeDetails?> BindAsync(HttpContext context)
+    {
+        // Getting body data from request.. (it is HttpRequest type)
+        using var sr = new StreamReader(context.Request.Body);
+
+        string? line1 = await sr.ReadLineAsync(context.RequestAborted);
+        if (line1 is null)
+        {
+            return null;
+        }
+
+        string? line2 = await sr.ReadLineAsync(context.RequestAborted);
+        if (line2 is null)
+        {
+            return null;
+        }
+
+        return double.TryParse(line1, out double height)
+            && double.TryParse(line2, out double width)
+            ? new SizeDetails(height, width)
+            : null;
+    }
+}
