@@ -6,6 +6,7 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Kestrel configuration for HTTP/2 and HTTP/3. This can be replaced to appsettings.json related..
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
     options.ListenAnyIP(2010, listenOptions =>
@@ -65,7 +66,7 @@ else
 app.MapGet("/HealthCheck", () => Results.Ok()).WithName("healthcheck");
 
 // ASP.NET Core binds handler from routing information in default,
-// if there's no keyword exist, it tries to bind to query.
+// if there's no keyword, then it tries to bind to query.
 // However, it does not try to bind to header unless using attributes.
 // But we can explicitly force them to bind to routing, query and so on with attributes (From* family)
 app.MapGet("/legacy/products/{id}/paged",
@@ -96,7 +97,7 @@ new[]
 // LinkGenerator can create an URL to endpoint.
 app.MapGet("/links", (LinkGenerator links) =>
 {
-    // Create a link dynamically (in runtime)
+    // Create a link dynamically (in runtime) -> it is dependency injection
     string link = links.GetPathByName("prod",
         new { name = "big-widget" });
 
@@ -104,10 +105,10 @@ app.MapGet("/links", (LinkGenerator links) =>
 });
 
 // Array as a parameter; valid only if the HTTP verb does not include request body
-app.MapGet("/product/{id}", (ProductId id) => $"Received {id}");     // With route
-app.MapPost("/product", (Product product) => $"Received {product}"); // With JSON request body
+app.MapGet("/product/{id}", (ProductId id) => $"Received {id}");     // From route
+app.MapPost("/product", (Product product) => $"Received {product}"); // From JSON request body
 app.MapGet("products/search", 
-    ([FromQuery(Name = "id")] int[] id) => $"Received {id.Length} ids"); // Getting id from query.
+    ([FromQuery(Name = "id")] int[] id) => $"Received {id.Length} ids"); // Getting id from query array.
 
 // Optional parameter
 app.MapGet("/stock/{id?}", (int? id) => $"Received stock {id} (From route)");
@@ -131,6 +132,8 @@ app.Run();
 string StockWithDefaultValue(int id = 0) => $"Received {id} (From default value)";
 
 // Implements custom type binding with TryParse implementation
+// TryParse is fit for string parameter or simple data type..
+// If we should go over other things which present in HttpContext, Use BindAsync instead
 readonly record struct ProductId(int Id)
 {
     public static bool TryParse(string? s, out ProductId result)
