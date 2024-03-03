@@ -136,6 +136,10 @@ app.MapPost("/upload", (IFormFileCollection files) =>
 // We can fully customize binding than TryParse (They're for string parameter or something simple type)
 app.MapPost("/sizes", (SizeDetails size) => $"Received {size}");
 
+// [AsParameters] binding; requires .NET 7 or later.
+// More readability than traditional ways, and even can mix the old-school ways.
+app.MapGet("/category/{id}",
+    ([AsParameters] SearchModel model) => $"Received {model}");
 
 // But in ASP.NET Core Razor, redirection to generated link is more widely used..
 // Results.RedirectToRoute returns 302 Found response code in default,
@@ -197,3 +201,10 @@ public record class SizeDetails(double height, double width)
             : null;
     }
 }
+
+// [AsParameters] record
+record struct SearchModel(
+    int id,
+    int page,
+    [FromHeader(Name = "sort")] bool? sortAsc,
+    [FromQuery(Name = "q")] string search);
