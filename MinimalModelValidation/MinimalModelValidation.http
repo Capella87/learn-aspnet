@@ -1,0 +1,13 @@
+@MinimalModelValidation_HostAddress = https://localhost:2010
+
+POST {{MinimalModelValidation_HostAddress}}/users/
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "EmailAddress": "asdf@asdf.com",
+    "PhoneNumber": "1234567789"
+}
+
+###
