@@ -62,7 +62,7 @@ else
 // Routing
 
 // /users binding 
-app.MapPost("/users", (UserModel user) => user.ToString());
+app.MapPost("/users", (CreateUserModel user) => user.ToString());
 
 app.Run();
 
@@ -88,4 +88,22 @@ public record class UserModel
     [Phone]
     [Display(Name = "Phone Number")]
     public string PhoneNumber { get; set; }
+}
+
+public record class CreateUserModel : IValidatableObject
+{
+    [EmailAddress]
+    public string EmailAddress { get; set; }
+
+    [Phone]
+    public string PhoneNumber { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        if (string.IsNullOrEmpty(EmailAddress) && string.IsNullOrEmpty(PhoneNumber))
+        {
+            yield return new ValidationResult("You must provide an EmailAddress or a PhoneNumber",
+                [nameof(EmailAddress), nameof(PhoneNumber)]); // This expression is called collection expressions. Requires .NET 8 (C# 12) or later.
+        }
+    }
 }
