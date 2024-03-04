@@ -64,6 +64,9 @@ else
 // /users binding 
 app.MapPost("/users", (CreateUserModel user) => user.ToString());
 
+// /minimal/users binding; Requires MinimalApis.Extensions for WithParameterValidation();
+app.MapPost("/minimal/users", (UserModel user) => user.ToString()).WithParameterValidation();
+
 app.Run();
 
 public record class UserModel
