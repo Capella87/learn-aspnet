@@ -11,3 +11,13 @@ Content-Type: application/json
 }
 
 ###
+
+POST {{MinimalModelValidation_HostAddress}}/minimal/users/
+Content-Type: application/json
+
+{
+    "FirstName": "John",
+    "LastName": "Doe",
+    "EmailAddress": "asdf@asdf.com",
+    "PhoneNumber": "1234567789"
+}
