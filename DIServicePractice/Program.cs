@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,4 +61,21 @@ else
 
 app.MapGet("/", () => "Hello Dependency Injection!");
 
+app.MapGet("/register/{username}", RegisterUser);
+
 app.Run();
+
+string RegisterUser(string username)
+{
+    var emailSender = new EmailSender();
+    emailSender.SendEmail(username);
+    return $"Email sent to {username}!";
+}
+
+public class EmailSender
+{
+    public void SendEmail(string username)
+    {
+        Console.WriteLine($"Email sent to {username}!");
+    }
+}
