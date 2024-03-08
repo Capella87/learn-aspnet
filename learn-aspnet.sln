@@ -18,9 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalWebAPI", "MinimalWeb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalAPIRouting", "MinimalAPIRouting\MinimalAPIRouting.csproj", "{F96D9C81-75A6-49DF-B3FC-C54D625076AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalModelValidation", "MinimalModelValidation\MinimalModelValidation.csproj", "{EE49027C-C3AA-4DF9-949B-B6237075CBA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalModelValidation", "MinimalModelValidation\MinimalModelValidation.csproj", "{EE49027C-C3AA-4DF9-949B-B6237075CBA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DIServicePractice", "DIServicePractice\DIServicePractice.csproj", "{97A652A6-517D-4245-B1B7-9ED9578A61F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DIServicePractice", "DIServicePractice\DIServicePractice.csproj", "{97A652A6-517D-4245-B1B7-9ED9578A61F0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
