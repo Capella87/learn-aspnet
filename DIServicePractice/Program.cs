@@ -66,8 +66,13 @@ app.MapGet("/register/{username}", RegisterUser);
 app.Run();
 
 // Multiple dependencies without Dependency Injection
+// Endpoint handler dedicated for /register/{username}
 string RegisterUser(string username)
 {
+    // Create a EmailSender object with extra dependent objects at the same time
+    // No external new objects..
+    // This is implicit dependency, which should be avoided in practice.
+    // Those are internally initialized and used, so those cannot be used in outside of the class.
     var emailSender = new EmailSender(
         new MessageFactory(),
         new NetworkClient(
@@ -76,11 +81,13 @@ string RegisterUser(string username)
     return $"Email sent to {username}!";
 }
 
+// EmailSender class with explicit dependencies
 public class EmailSender
 {
     private readonly NetworkClient _client;
     private readonly MessageFactory _factory;
 
+    // This is explicit dependency because 2 dependent classes must be created at initialization
     public EmailSender(MessageFactory factory, NetworkClient client)
     {
         _factory = factory;
@@ -89,6 +96,7 @@ public class EmailSender
 
     public void SendEmail(string username)
     {
+        // Create Email object with EmailFactory class. This is factory pattern
         var email = _factory.Create(username);
         _client.SendEmail(email);
 
