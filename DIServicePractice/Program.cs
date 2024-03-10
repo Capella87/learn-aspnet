@@ -67,7 +67,7 @@ app.Run();
 
 // Multiple dependencies without Dependency Injection
 // Endpoint handler dedicated for /register/{username}
-string RegisterUser(string username)
+string RegisterUserWithoutDI(string username)
 {
     // Create a EmailSender object with extra dependent objects at the same time
     // No external new objects..
@@ -77,6 +77,14 @@ string RegisterUser(string username)
         new MessageFactory(),
         new NetworkClient(
             new EmailServerSettings("asdf.asdf.com", 25)));
+    emailSender.SendEmail(username);
+    return $"Email sent to {username}!";
+}
+
+// With Dependency injection. This handler just invokes method or delegate. Because needed object is provided, not created inside the handler.
+// It has a single responsibility of SOLID principle.
+string RegisterUser(string username, EmailSender emailSender)
+{
     emailSender.SendEmail(username);
     return $"Email sent to {username}!";
 }
