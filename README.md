@@ -12,6 +12,10 @@ Detailed materials such as learning notes which contain I've learned will be ava
 The blog will be available on https://capelladev.com/blog
 
 ## Plans
+* Minimal Web API
+* MVC
+* OpenAPI
+* Authentication
 * Generic Host
 * Logging using Serilog
 * xUnit for testing
@@ -35,4 +39,4 @@ The blog will be available on https://capelladev.com/blog
 This repository is distributed under MIT License. See LICENSE file for details.
 
 ---
-2023 © Capella87
+2023-2024 © Capella87
