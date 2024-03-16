@@ -39,8 +39,9 @@ builder.Services.AddHttpLogging(opts =>
    opts.LoggingFields = HttpLoggingFields.RequestProperties);
 builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
 builder.Services.AddProblemDetails();
-builder.Services.AddRazorPages();
 builder.Services.AddHealthChecks();
+
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -59,7 +60,12 @@ else
     app.UseExceptionHandler();
 }
 
+app.MapRazorPages();
+
 app.MapGet("/", () => "Hello Dependency Injection!");
+
+// Directly access registered services from Program.cs at the ouside the context of a request..
+LinkGenerator links = app.Services.GetRequiredService<LinkGenerator>();
 
 app.MapGet("/register/{username}", RegisterUser);
 
@@ -67,6 +73,7 @@ app.Run();
 
 // Multiple dependencies without Dependency Injection
 // Endpoint handler dedicated for /register/{username}
+
 string RegisterUserWithoutDI(string username)
 {
     // Create a EmailSender object with extra dependent objects at the same time
