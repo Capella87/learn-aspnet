@@ -83,14 +83,20 @@ string RegisterUserWithoutDI(string username)
 
 // With Dependency injection. This handler just invokes method or delegate. Because needed object is provided, not created inside the handler.
 // It has a single responsibility of SOLID principle.
-string RegisterUser(string username, EmailSender emailSender)
+string RegisterUser(string username, IEmailSender emailSender)
 {
     emailSender.SendEmail(username);
     return $"Email sent to {username}!";
 }
 
+// Interface for extensibility
+public interface IEmailSender
+{
+    public void SendEmail(string username);
+}
+
 // EmailSender class with explicit dependencies
-public class EmailSender
+public class EmailSender : IEmailSender
 {
     private readonly NetworkClient _client;
     private readonly MessageFactory _factory;
