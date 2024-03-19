@@ -43,6 +43,16 @@ builder.Services.AddHealthChecks();
 
 builder.Services.AddRazorPages();
 
+// Register services such as interfaces, classes to DI Container
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddScoped<NetworkClient>();
+builder.Services.AddSingleton<MessageFactory>();
+builder.Services.AddSingleton(new EmailServerSettings
+(
+    Host: "smtp.server.asdf",
+    Port: 25
+));
+
 var app = builder.Build();
 
 app.UseHsts();
