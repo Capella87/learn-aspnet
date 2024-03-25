@@ -43,25 +43,8 @@ builder.Services.AddHealthChecks();
 
 builder.Services.AddRazorPages();
 
-// Register services such as interfaces, classes to DI Container
-builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddScoped<NetworkClient>();
-builder.Services.AddSingleton<MessageFactory>();
-// Providing a function to create the object. This makes it extend beyond singleton.
-builder.Services.AddScoped(
-    provider => // function to be provided as an IServiceProvider instance
-    new EmailServerSettings
-    (
-        Host: "smtp.asdf.asdf",
-        Port: 25
-    )); // This constructer is provided, and it will be invoked every time when it is required.
-/*
-builder.Services.AddSingleton(new EmailServerSettings
-(
-    Host: "smtp.server.asdf",
-    Port: 25
-));
-*/
+// Much simpler.. with extension method.
+builder.Services.AddEmailSender();
 
 var app = builder.Build();
 
@@ -114,6 +97,24 @@ string RegisterUser(string username, IEmailSender emailSender)
 {
     emailSender.SendEmail(username);
     return $"Email sent to {username}!";
+}
+
+public static class EmailSenderServiceCollectionExtensions
+{
+    public static IServiceCollection AddEmailSender(this IServiceCollection services)
+    {
+        services.AddScoped<IEmailSender, EmailSender>();
+        services.AddSingleton<NetworkClient>();
+        services.AddScoped<MessageFactory>();
+        services.AddSingleton(
+            new EmailServerSettings
+            (
+                Host: "smtp.asdf.asdf",
+                Port: 25
+            ));
+
+        return services;
+    }
 }
 
 // Interface for extensibility
