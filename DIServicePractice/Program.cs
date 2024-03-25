@@ -47,11 +47,21 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<NetworkClient>();
 builder.Services.AddSingleton<MessageFactory>();
+// Providing a function to create the object. This makes it extend beyond singleton.
+builder.Services.AddScoped(
+    provider => // function to be provided as an IServiceProvider instance
+    new EmailServerSettings
+    (
+        Host: "smtp.asdf.asdf",
+        Port: 25
+    )); // This constructer is provided, and it will be invoked every time when it is required.
+/*
 builder.Services.AddSingleton(new EmailServerSettings
 (
     Host: "smtp.server.asdf",
     Port: 25
 ));
+*/
 
 var app = builder.Build();
 
