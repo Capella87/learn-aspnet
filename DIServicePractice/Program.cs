@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +49,9 @@ builder.Services.AddRazorPages();
 builder.Services.AddEmailSender();
 
 builder.Services.AddScoped<IMessageSender, NewEmailSender>();
-builder.Services.AddScoped<IMessageSender, SmsSender>();
+
+// An implementation added via TryAddScoped will only be used when there's no implementation registered previously
+builder.Services.TryAddScoped<IMessageSender, SmsSender>();
 
 var app = builder.Build();
 
