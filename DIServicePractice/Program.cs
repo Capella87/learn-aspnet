@@ -46,6 +46,9 @@ builder.Services.AddRazorPages();
 // Much simpler.. with extension method.
 builder.Services.AddEmailSender();
 
+builder.Services.AddScoped<IMessageSender, NewEmailSender>();
+builder.Services.AddScoped<IMessageSender, SmsSender>();
+
 var app = builder.Build();
 
 app.UseHsts();
@@ -71,6 +74,8 @@ app.MapGet("/", () => "Hello Dependency Injection!");
 LinkGenerator links = app.Services.GetRequiredService<LinkGenerator>();
 
 app.MapGet("/register/{username}", RegisterUser);
+app.MapGet("/message/single/{username}", SendSingleMessage);
+app.MapGet("/message/multi/{username}", SendMultiMessage);
 
 app.Run();
 
@@ -99,6 +104,22 @@ string RegisterUser(string username, IEmailSender emailSender)
     return $"Email sent to {username}!";
 }
 
+string SendSingleMessage(string username, IMessageSender sender)
+{
+    sender.SendMessage($"Hello {username}!");
+    return "Check the application logs to see what was called..";
+}
+
+string SendMultiMessage(string username, IEnumerable<IMessageSender> senders)
+{
+    foreach (var sender in senders)
+    {
+        sender.SendMessage($"Hello {username}!");
+    }
+
+    return "Check the application logs to see what were called..";
+}
+
 public static class EmailSenderServiceCollectionExtensions
 {
     public static IServiceCollection AddEmailSender(this IServiceCollection services)
@@ -118,9 +139,31 @@ public static class EmailSenderServiceCollectionExtensions
 }
 
 // Interface for extensibility
+public interface IMessageSender
+{
+    public void SendMessage(string message);
+}
+
 public interface IEmailSender
 {
     public void SendEmail(string username);
+}
+
+// Newer classes which implement IMessageSender
+public class NewEmailSender : IMessageSender
+{
+    public void SendMessage(string message)
+    {
+        Console.WriteLine($"Sending Email message: {message}");
+    }
+}
+
+public class SmsSender : IMessageSender
+{
+    public void SendMessage(string message)
+    {
+        Console.WriteLine($"Sending SMS message: {message}");
+    }
 }
 
 // EmailSender class with explicit dependencies
