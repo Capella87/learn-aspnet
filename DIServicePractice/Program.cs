@@ -75,6 +75,10 @@ else
 
 app.MapRazorPages();
 
+// Lists for preserving previous data
+List<string> _transients = new();
+
+
 app.MapGet("/", () => "Hello Dependency Injection!");
 
 // Directly access registered services from Program.cs at the ouside the context of a request..
@@ -84,7 +88,7 @@ app.MapGet("/register/{username}", RegisterUser);
 app.MapGet("/message/single/{username}", SendSingleMessage);
 app.MapGet("/message/multi/{username}", SendMultiMessage);
 
-app.MapGet("/di/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo));
+app.MapGet("/di/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo, _transients));
 
 app.Run();
 
@@ -129,12 +133,23 @@ string SendMultiMessage(string username, IEnumerable<IMessageSender> senders)
     return "Check the application logs to see what were called..";
 }
 
-static string RowCounts(DIDataContext db, DIRepository repository)
+static string RowCounts(DIDataContext db, DIRepository repository, List<string> previousData)
 {
     int dbCount = db.RowCount;
     int repositoryCount = repository.RowCount;
 
-    return $"DataContext: {dbCount}, Repository: {repositoryCount}";
+    var counts = $"DataContext: {dbCount}, Repository: {repositoryCount}";
+
+    // Show previous results. The list will be reset at every startup, but will be persisted until the host is terminated.
+    var result = $@"
+Current values:
+{counts}
+
+Previous values:
+{string.Join(Environment.NewLine, previousData)}";
+
+    previousData.Insert(0, counts);
+    return result;
 }
 
 public static class EmailSenderServiceCollectionExtensions
