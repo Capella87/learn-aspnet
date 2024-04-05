@@ -77,7 +77,7 @@ app.MapRazorPages();
 // Lists for preserving previous data
 List<string> _transients = new();
 List<string> _scopeds = new();
-
+List<string> _singletons = new();
 
 app.MapGet("/", () => "Hello Dependency Injection!");
 
@@ -89,7 +89,7 @@ app.MapGet("/message/single/{username}", SendSingleMessage);
 app.MapGet("/message/multi/{username}", SendMultiMessage);
 
 app.MapGroup("/di/")
-    .MapDIServices([_transients, _scopeds])
+    .MapDIServices([_transients, _scopeds, _singletons])
     .WithTags("DILifetime");
 
 app.Run();
@@ -161,6 +161,8 @@ public static class DIRouteBuilderExtension
         services.AddTransient<DITransientDataContext>();
         services.AddScoped<DIScopedRepository>();
         services.AddScoped<DIScopedDataContext>();
+        services.AddSingleton<DISingletonRepository>();
+        services.AddSingleton<DISingletonDataContext>();
 
         return services;
     }
@@ -170,6 +172,7 @@ public static class DIRouteBuilderExtension
         group.MapGet("", () => "Dependency Injection: There are 3 lifetime options. Please append the one of type you want at path.");
         group.MapGet("/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo, historyLists[0]));
         group.MapGet("/scoped/", (DIScopedDataContext db, DIScopedRepository repo) => RowCounts(db, repo, historyLists[1]));
+        group.MapGet("/singleton/", (DISingletonDataContext db, DISingletonRepository repo) => RowCounts(db, repo, historyLists[2]));
 
         return group;
     }
@@ -291,7 +294,11 @@ public class DITransientDataContext : DIDataContext;
 
 public class DIScopedDataContext : DIDataContext;
 
+public class DISingletonDataContext : DIDataContext;
+
 
 public class DITransientRepository(DITransientDataContext generator) : DIRepository(generator);
 
 public class DIScopedRepository(DIScopedDataContext generator) : DIRepository(generator);
+
+public class DISingletonRepository(DISingletonDataContext generator) : DIRepository(generator);
