@@ -55,6 +55,8 @@ builder.Services.TryAddScoped<IMessageSender, SmsSender>();
 
 builder.Services.AddTransient<DITransientRepository>();
 builder.Services.AddTransient<DITransientDataContext>();
+builder.Services.AddScoped<DIScopedRepository>();
+builder.Services.AddScoped<DIScopedDataContext>();
 
 var app = builder.Build();
 
@@ -77,6 +79,7 @@ app.MapRazorPages();
 
 // Lists for preserving previous data
 List<string> _transients = new();
+List<string> _scopeds = new();
 
 
 app.MapGet("/", () => "Hello Dependency Injection!");
@@ -89,6 +92,7 @@ app.MapGet("/message/single/{username}", SendSingleMessage);
 app.MapGet("/message/multi/{username}", SendMultiMessage);
 
 app.MapGet("/di/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo, _transients));
+app.MapGet("/di/scoped/", (DIScopedDataContext db, DIScopedRepository repo) => RowCounts(db, repo, _scopeds));
 
 app.Run();
 
@@ -250,7 +254,6 @@ public record EmailServerSettings(string Host, int Port);
 public class DIDataContext
 {
     public int RowCount { get; } = Random.Shared.Next(1, 1_000_000_000);
-
 }
 
 public class DIRepository
@@ -264,15 +267,11 @@ public class DIRepository
     public int RowCount => _dataContext.RowCount;
 }
 
-public class DITransientDataContext : DIDataContext
-{
+public class DITransientDataContext : DIDataContext;
 
-}
+public class DIScopedDataContext : DIDataContext;
 
-public class DITransientRepository : DIRepository
-{
-    public DITransientRepository(DITransientDataContext generator) : base(generator)
-    {
 
-    }
-}
+public class DITransientRepository(DITransientDataContext generator) : DIRepository(generator);
+
+public class DIScopedRepository(DIScopedDataContext generator) : DIRepository(generator);
