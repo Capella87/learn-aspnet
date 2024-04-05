@@ -87,7 +87,7 @@ List<string> _transients = new();
 List<string> _scopeds = new();
 List<string> _singletons = new();
 
-app.MapGet("/", () => "Hello Dependency Injection!");
+app.MapGet("/", () => "Hello Dependency Injection! Visit /di/");
 
 // Directly access registered services from Program.cs at the ouside the context of a request..
 LinkGenerator links = app.Services.GetRequiredService<LinkGenerator>();
@@ -99,6 +99,12 @@ app.MapGet("/message/multi/{username}", SendMultiMessage);
 app.MapGroup("/di/")
     .MapDIServices([_transients, _scopeds, _singletons])
     .WithTags("DILifetime");
+
+await using (var scope = app.Services.CreateAsyncScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DIScopedDataContext>();
+    Console.WriteLine($"Retrieved scope with RowCount: {dbContext.RowCount}");
+}
 
 app.Run();
 
