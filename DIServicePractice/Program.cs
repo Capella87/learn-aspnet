@@ -169,6 +169,11 @@ public static class DIRouteBuilderExtension
 
     public static RouteGroupBuilder MapDIServices(this RouteGroupBuilder group, params List<string>[] historyLists)
     {
+        if (historyLists.Length < 3)
+        {
+            throw new RouteCreationException("Not enough lists. At least 3 lists are required.");
+        }
+
         group.MapGet("", () => "Dependency Injection: There are 3 lifetime options. Please append the one of type you want at path.");
         group.MapGet("/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo, historyLists[0]));
         group.MapGet("/scoped/", (DIScopedDataContext db, DIScopedRepository repo) => RowCounts(db, repo, historyLists[1]));
@@ -185,8 +190,7 @@ public static class DIRouteBuilderExtension
         var counts = $"DataContext: {dbCount}, Repository: {repositoryCount}";
 
         // Show previous results. The list will be reset at every startup, but will be persisted until the host is terminated.
-        var result = $@"
-Current values:
+        var result = $@"Current values:
 {counts}
 
 Previous values:
