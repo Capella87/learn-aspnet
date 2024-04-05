@@ -53,10 +53,7 @@ builder.Services.AddScoped<IMessageSender, NewEmailSender>();
 // An implementation added via TryAddScoped will only be used when there's no implementation registered previously
 builder.Services.TryAddScoped<IMessageSender, SmsSender>();
 
-builder.Services.AddTransient<DITransientRepository>();
-builder.Services.AddTransient<DITransientDataContext>();
-builder.Services.AddScoped<DIScopedRepository>();
-builder.Services.AddScoped<DIScopedDataContext>();
+builder.Services.AddDIServices();
 
 var app = builder.Build();
 
@@ -91,8 +88,9 @@ app.MapGet("/register/{username}", RegisterUser);
 app.MapGet("/message/single/{username}", SendSingleMessage);
 app.MapGet("/message/multi/{username}", SendMultiMessage);
 
-app.MapGet("/di/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo, _transients));
-app.MapGet("/di/scoped/", (DIScopedDataContext db, DIScopedRepository repo) => RowCounts(db, repo, _scopeds));
+app.MapGroup("/di/")
+    .MapDIServices([_transients, _scopeds])
+    .WithTags("DILifetime");
 
 app.Run();
 
@@ -137,25 +135,6 @@ string SendMultiMessage(string username, IEnumerable<IMessageSender> senders)
     return "Check the application logs to see what were called..";
 }
 
-static string RowCounts(DIDataContext db, DIRepository repository, List<string> previousData)
-{
-    int dbCount = db.RowCount;
-    int repositoryCount = repository.RowCount;
-
-    var counts = $"DataContext: {dbCount}, Repository: {repositoryCount}";
-
-    // Show previous results. The list will be reset at every startup, but will be persisted until the host is terminated.
-    var result = $@"
-Current values:
-{counts}
-
-Previous values:
-{string.Join(Environment.NewLine, previousData)}";
-
-    previousData.Insert(0, counts);
-    return result;
-}
-
 public static class EmailSenderServiceCollectionExtensions
 {
     public static IServiceCollection AddEmailSender(this IServiceCollection services)
@@ -171,6 +150,47 @@ public static class EmailSenderServiceCollectionExtensions
             ));
 
         return services;
+    }
+}
+
+public static class DIRouteBuilderExtension
+{
+    public static IServiceCollection AddDIServices(this IServiceCollection services)
+    {
+        services.AddTransient<DITransientRepository>();
+        services.AddTransient<DITransientDataContext>();
+        services.AddScoped<DIScopedRepository>();
+        services.AddScoped<DIScopedDataContext>();
+
+        return services;
+    }
+
+    public static RouteGroupBuilder MapDIServices(this RouteGroupBuilder group, params List<string>[] historyLists)
+    {
+        group.MapGet("", () => "Dependency Injection: There are 3 lifetime options. Please append the one of type you want at path.");
+        group.MapGet("/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo, historyLists[0]));
+        group.MapGet("/scoped/", (DIScopedDataContext db, DIScopedRepository repo) => RowCounts(db, repo, historyLists[1]));
+
+        return group;
+    }
+
+    static string RowCounts(DIDataContext db, DIRepository repository, List<string> previousData)
+    {
+        int dbCount = db.RowCount;
+        int repositoryCount = repository.RowCount;
+
+        var counts = $"DataContext: {dbCount}, Repository: {repositoryCount}";
+
+        // Show previous results. The list will be reset at every startup, but will be persisted until the host is terminated.
+        var result = $@"
+Current values:
+{counts}
+
+Previous values:
+{string.Join(Environment.NewLine, previousData)}";
+
+        previousData.Insert(0, counts);
+        return result;
     }
 }
 
