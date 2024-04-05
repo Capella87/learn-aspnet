@@ -53,6 +53,9 @@ builder.Services.AddScoped<IMessageSender, NewEmailSender>();
 // An implementation added via TryAddScoped will only be used when there's no implementation registered previously
 builder.Services.TryAddScoped<IMessageSender, SmsSender>();
 
+builder.Services.AddTransient<DITransientRepository>();
+builder.Services.AddTransient<DITransientDataContext>();
+
 var app = builder.Build();
 
 app.UseHsts();
@@ -80,6 +83,8 @@ LinkGenerator links = app.Services.GetRequiredService<LinkGenerator>();
 app.MapGet("/register/{username}", RegisterUser);
 app.MapGet("/message/single/{username}", SendSingleMessage);
 app.MapGet("/message/multi/{username}", SendMultiMessage);
+
+app.MapGet("/di/transient/", (DITransientDataContext db, DITransientRepository repo) => RowCounts(db, repo));
 
 app.Run();
 
@@ -242,4 +247,17 @@ public class DIRepository
     }
 
     public int RowCount => _dataContext.RowCount;
+}
+
+public class DITransientDataContext : DIDataContext
+{
+
+}
+
+public class DITransientRepository : DIRepository
+{
+    public DITransientRepository(DITransientDataContext generator) : base(generator)
+    {
+
+    }
 }
