@@ -124,6 +124,14 @@ string SendMultiMessage(string username, IEnumerable<IMessageSender> senders)
     return "Check the application logs to see what were called..";
 }
 
+static string RowCounts(DIDataContext db, DIRepository repository)
+{
+    int dbCount = db.RowCount;
+    int repositoryCount = repository.RowCount;
+
+    return $"DataContext: {dbCount}, Repository: {repositoryCount}";
+}
+
 public static class EmailSenderServiceCollectionExtensions
 {
     public static IServiceCollection AddEmailSender(this IServiceCollection services)
@@ -218,3 +226,20 @@ public class MessageFactory
 
 public record Email(string Address, string Message);
 public record EmailServerSettings(string Host, int Port);
+
+public class DIDataContext
+{
+    public int RowCount { get; } = Random.Shared.Next(1, 1_000_000_000);
+
+}
+
+public class DIRepository
+{
+    private readonly DIDataContext _dataContext;
+    public DIRepository(DIDataContext dataContext)
+    {
+        _dataContext = dataContext;
+    }
+
+    public int RowCount => _dataContext.RowCount;
+}
