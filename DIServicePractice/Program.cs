@@ -36,6 +36,14 @@ builder.Services.ConfigureHttpJsonOptions(o =>
     o.SerializerOptions.PropertyNameCaseInsensitive = true;
 });
 
+// Enable Scope Validation always (By default, it is only enabled in development)
+builder.Host.UseDefaultServiceProvider(o =>
+{
+    o.ValidateScopes = true;
+    o.ValidateOnBuild = true;
+});
+// It is safe to use only dependencies that have longer than or equal to the service's lifetime.
+
 builder.Services.AddAntiforgery();
 builder.Services.AddHttpLogging(opts =>
    opts.LoggingFields = HttpLoggingFields.RequestProperties);
