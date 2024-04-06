@@ -3,6 +3,9 @@ using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.Sources.Clear();
+builder.Configuration.AddJsonFile("appsettings.json", optional: true);
+
 // Kestrel configuration for HTTP/2 and HTTP/3. This can be replaced to appsettings.json related..
 builder.WebHost.ConfigureKestrel((context, options) =>
 {
@@ -66,5 +69,6 @@ app.MapRazorPages();
 
 app.MapGet("/", () => 
 @"Let's learn configuration and generic host!");
+app.MapGet("/config", () => app.Configuration.AsEnumerable());
 
 app.Run();
