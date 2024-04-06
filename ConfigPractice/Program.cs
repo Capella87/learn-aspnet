@@ -7,16 +7,6 @@ builder.Configuration.Sources.Clear();
 builder.Configuration.AddJsonFile("sharedsettings.json", optional: true);
 builder.Configuration.AddJsonFile("appsettings.json", optional: true);
 
-// Kestrel configuration for HTTP/2 and HTTP/3. This can be replaced to appsettings.json related..
-builder.WebHost.ConfigureKestrel((context, options) =>
-{
-    options.ListenAnyIP(20621, listenOptions =>
-    {
-        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1AndHttp2AndHttp3;
-        listenOptions.UseHttps();
-    });
-});
-
 // Routing configuration
 builder.Services.Configure<RouteOptions>(o =>
 {
