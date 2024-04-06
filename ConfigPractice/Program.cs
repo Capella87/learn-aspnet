@@ -4,6 +4,7 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.Sources.Clear();
+builder.Configuration.AddJsonFile("sharedsettings.json", optional: true);
 builder.Configuration.AddJsonFile("appsettings.json", optional: true);
 
 // Kestrel configuration for HTTP/2 and HTTP/3. This can be replaced to appsettings.json related..
