@@ -72,4 +72,7 @@ app.MapGet("/", () =>
 // Configurations are registered in the DI container
 app.MapGet("/config", (IConfiguration config) => config.AsEnumerable());
 
+var zoomLevel = builder.Configuration["MapSettings:DefaultZoomLevel"];
+var lat = builder.Configuration.GetSection("MapSettings")["DefaultLocation:Latitude"];
+
 app.Run();
