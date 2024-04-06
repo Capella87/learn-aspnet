@@ -69,6 +69,7 @@ app.MapRazorPages();
 
 app.MapGet("/", () => 
 @"Let's learn configuration and generic host!");
-app.MapGet("/config", () => app.Configuration.AsEnumerable());
+// Configurations are registered in the DI container
+app.MapGet("/config", (IConfiguration config) => config.AsEnumerable());
 
 app.Run();
