@@ -39,6 +39,13 @@ builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddRazorPages();
 
+// User Secrets; We should use this provider method only in development.
+// In production, environment variables or key vaults such as Azure Key Vault are strongly recommended.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
+
 var app = builder.Build();
 
 app.UseHsts();
