@@ -4,8 +4,9 @@ using System.Text.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.Sources.Clear();
-builder.Configuration.AddJsonFile("sharedsettings.json", optional: true);
-builder.Configuration.AddJsonFile("appsettings.json", optional: true);
+builder.Configuration.AddJsonFile("sharedsettings.json", optional: true,
+    reloadOnChange: true);
+builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
 // Routing configuration
 builder.Services.Configure<RouteOptions>(o =>
