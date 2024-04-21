@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.Extensions.Options;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,10 @@ builder.Configuration.Sources.Clear();
 builder.Configuration.AddJsonFile("sharedsettings.json", optional: true,
     reloadOnChange: true);
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+// Bind each section to POCO option class.
+builder.Services.Configure<MapSettings>(builder.Configuration.GetSection("MapSettings"));
+builder.Services.Configure<AppDisplaySettings>(builder.Configuration.GetSection("AppDisplaySettings"));
 
 // Routing configuration
 builder.Services.Configure<RouteOptions>(o =>
@@ -71,7 +76,34 @@ app.MapGet("/", () =>
 // Configurations are registered in the DI container
 app.MapGet("/config", (IConfiguration config) => config.AsEnumerable());
 
+app.MapGet("/display-settings", (IOptions<AppDisplaySettings> options) =>
+{
+    AppDisplaySettings settings = options.Value;
+    string title = settings.Title;
+    bool showCopyright = settings.ShowCopyright;
+
+    return new { title, showCopyright };
+});
+
 var zoomLevel = builder.Configuration["MapSettings:DefaultZoomLevel"];
 var lat = builder.Configuration.GetSection("MapSettings")["DefaultLocation:Latitude"];
 
 app.Run();
+
+public class AppDisplaySettings
+{
+    public string Title { get; set; }
+    public bool ShowCopyright { get; set; }
+}
+
+public class MapSettings
+{
+    public int DefaultZoomLevel { get; set; }
+    public DefaultLocation DefaultLoc {get; set; }
+
+    public class DefaultLocation
+    {
+        public string Latitude { get; set; }
+        public string Longitude { get; set; }
+    }
+}
