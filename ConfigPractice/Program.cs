@@ -9,9 +9,17 @@ builder.Configuration.AddJsonFile("sharedsettings.json", optional: true,
     reloadOnChange: true);
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
-// Bind each section to POCO option class.
-builder.Services.Configure<MapSettings>(builder.Configuration.GetSection("MapSettings"));
+// Bind a section to proper POCO option class.
 builder.Services.Configure<AppDisplaySettings>(builder.Configuration.GetSection("AppDisplaySettings"));
+// Registers the MapSettings object in DI by delegating to the IOptions registration
+builder.Services.AddSingleton(provider => provider.GetRequiredService<IOptions<AppDisplaySettings>>().Value);
+
+// Bind strongly typed settings without IOptions
+var settings = new MapSettings();
+// Almost the same above, but it is getting the section and binds MapSettings to the settings object.
+builder.Configuration.GetSection("MapSettings").Bind(settings);
+// Register 
+builder.Services.AddSingleton(settings);
 
 // Routing configuration
 builder.Services.Configure<RouteOptions>(o =>
@@ -76,6 +84,7 @@ app.MapGet("/", () =>
 // Configurations are registered in the DI container
 app.MapGet("/config", (IConfiguration config) => config.AsEnumerable());
 
+/*
 app.MapGet("/display-settings", (IOptionsSnapshot<AppDisplaySettings> options) =>
 {
 
@@ -83,9 +92,10 @@ app.MapGet("/display-settings", (IOptionsSnapshot<AppDisplaySettings> options) =
 
     return new { title = settings.Title, showCopyright = settings.ShowCopyright };
 });
-
-var zoomLevel = builder.Configuration["MapSettings:DefaultZoomLevel"];
-var lat = builder.Configuration.GetSection("MapSettings")["DefaultLocation:Latitude"];
+*/
+// Without using IOptions at routing
+app.MapGet("/no-ioptions/mapsettings", (MapSettings mapSettings) => mapSettings);
+app.MapGet("/no-ioptions/appdisplaysettings", (AppDisplaySettings appDisplaySettings) => appDisplaySettings);
 
 app.Run();
 
@@ -98,9 +108,10 @@ public class AppDisplaySettings
 public class MapSettings
 {
     public int DefaultZoomLevel { get; set; }
-    public DefaultLocation DefaultLoc {get; set; }
+    // Remember that we must match subclass's name to the JSON property name.
+    public DefaultLocationInfo DefaultLocation { get; set; } = new DefaultLocationInfo();
 
-    public class DefaultLocation
+    public class DefaultLocationInfo
     {
         public string Latitude { get; set; }
         public string Longitude { get; set; }
