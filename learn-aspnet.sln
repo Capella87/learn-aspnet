@@ -22,7 +22,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalModelValidation", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DIServicePractice", "DIServicePractice\DIServicePractice.csproj", "{97A652A6-517D-4245-B1B7-9ED9578A61F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigPractice", "ConfigPractice\ConfigPractice.csproj", "{F13BA38A-756D-4E4A-B598-4DA97F286F14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigPractice", "ConfigPractice\ConfigPractice.csproj", "{F13BA38A-756D-4E4A-B598-4DA97F286F14}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAPIPractice", "OpenAPIPractice\OpenAPIPractice.csproj", "{30933D0A-C956-40CF-B55C-3837B10A4764}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,14 @@ Global
 		{F13BA38A-756D-4E4A-B598-4DA97F286F14}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F13BA38A-756D-4E4A-B598-4DA97F286F14}.Release|x64.ActiveCfg = Release|Any CPU
 		{F13BA38A-756D-4E4A-B598-4DA97F286F14}.Release|x64.Build.0 = Release|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|x64.Build.0 = Debug|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|x64.ActiveCfg = Release|Any CPU
+		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
