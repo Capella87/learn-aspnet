@@ -76,13 +76,12 @@ app.MapGet("/", () =>
 // Configurations are registered in the DI container
 app.MapGet("/config", (IConfiguration config) => config.AsEnumerable());
 
-app.MapGet("/display-settings", (IOptions<AppDisplaySettings> options) =>
+app.MapGet("/display-settings", (IOptionsSnapshot<AppDisplaySettings> options) =>
 {
-    AppDisplaySettings settings = options.Value;
-    string title = settings.Title;
-    bool showCopyright = settings.ShowCopyright;
 
-    return new { title, showCopyright };
+    AppDisplaySettings settings = options.Value;
+
+    return new { title = settings.Title, showCopyright = settings.ShowCopyright };
 });
 
 var zoomLevel = builder.Configuration["MapSettings:DefaultZoomLevel"];
