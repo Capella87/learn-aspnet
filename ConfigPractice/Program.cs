@@ -7,7 +7,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.Sources.Clear();
 builder.Configuration.AddJsonFile("sharedsettings.json", optional: true,
     reloadOnChange: true);
-builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+builder.Configuration
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
+// User Secrets; We should use this provider method only in development.
+// In production, environment variables or key vaults such as Azure Key Vault are strongly recommended.
+if (builder.Environment.IsDevelopment())
+{
+    builder.Configuration.AddUserSecrets<Program>();
+}
 
 // Bind a section to proper POCO option class.
 builder.Services.Configure<AppDisplaySettings>(builder.Configuration.GetSection("AppDisplaySettings"));
@@ -52,13 +61,6 @@ builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
 builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddRazorPages();
-
-// User Secrets; We should use this provider method only in development.
-// In production, environment variables or key vaults such as Azure Key Vault are strongly recommended.
-if (builder.Environment.IsDevelopment())
-{
-    builder.Configuration.AddUserSecrets<Program>();
-}
 
 var app = builder.Build();
 
