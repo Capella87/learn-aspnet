@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.HttpLogging;
 using System.Collections.Concurrent;
+using Microsoft.OpenApi.Models;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,9 +48,18 @@ builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddRazorPages();
 
+builder.Services.AddMvc();
+
 // Add OpenAPI tool, Swagger related services
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(x =>
+    x.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "KoreanCityAPI",
+        Description = "An API for Korean cities and counties",
+        Version = "v1"
+    }));
 
 var app = builder.Build();
 
@@ -81,7 +91,10 @@ app.MapGet("/", () => "Hello World!");
 // app.MapGroup("/city/", )
 app.MapGet("/city/", () => _city.Values);
 app.MapGet("/city/{id}", (string id) =>
-    _city.TryGetValue(id, out var city) ? TypedResults.Ok(city) : (IResult)TypedResults.Problem(statusCode: 404));
+    _city.TryGetValue(id, out var city) ? TypedResults.Ok(city) : (IResult)TypedResults.Problem(statusCode: 404))
+    .WithTags("city")
+    .Produces<City>()
+    .ProducesProblem(statusCode: 404);
 app.MapPost("/city/{id}", (string id, City city) =>
     _city.TryAdd(id, city)
     ? TypedResults.Created($"/city/{id}", city)
@@ -93,8 +106,11 @@ app.MapPost("/city/{id}", (string id, City city) =>
                 "A city with this id already exists"
             }
         }
-    }));
+    }))
+    .WithTags("city")
+    .Produces<City>(statusCode: 201)
+    .ProducesValidationProblem();
 
 app.Run();
 
-record City(string Name, string Country, int Population);
+record City(string Name, string Province, int Population);
