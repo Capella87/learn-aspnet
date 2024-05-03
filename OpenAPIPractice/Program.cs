@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.OpenApi;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -91,22 +92,26 @@ app.MapGet("/", () => "Hello World!")
     .WithName("Index");
 
 // app.MapGroup("/city/", )
-app.MapGet("/city/", () => _city.Values)
-    .WithName("GetAllCityEntries")
-    .WithTags("city")
-    .Produces<ICollection<City>>()
-    .WithSummary("Fetches all city entries")
-    .WithDescription("Fetches all registered city entries as a list, or returns a blank list if there's no entry")
+app.MapGet("/city/",
+    [EndpointName("GetAllCityEntries")]
+    [Tags("city")]
+    [ProducesResponseType(typeof(ICollection<City>), 200)]
+    [EndpointSummary("Fetches all city entries")]
+    [EndpointDescription("Fetches all registered city entries in ICollection type, or returns a blank [] if there's no entry")]
+    () => _city.Values)
     .WithOpenApi();
 
-app.MapGet("/city/{id}", (string id) =>
-    _city.TryGetValue(id, out var city) ? TypedResults.Ok(city) : (IResult)TypedResults.Problem(statusCode: 404))
-    .WithName("GetCityEntry")
-    .WithTags("city")
-    .Produces<City>()
-    .ProducesProblem(statusCode: 404) // Description for the API; It will be shown in Swagger API explorer.
-    .WithSummary("Fetches a city in Korea")
-    .WithDescription("Fetches a city entry by id, or returns 404 if there's no city entry with the ID exists")
+app.MapGet("/city/{id}", 
+    [EndpointName("GetCityEntry")]
+    [Tags("city")]
+    [EndpointDescription("Fetches a city entry by id, or returns 404 if there's no city entry with the ID exists")]
+    [EndpointSummary("Fetches a city in Korea")]
+    [ProducesResponseType(typeof(City), 200, "application/json")]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), 404, "application/problem+json")]
+    (string id) =>
+        _city.TryGetValue(id, out var city)
+            ? TypedResults.Ok(city)
+            : (IResult)TypedResults.Problem(statusCode: 404))
     // Parameter description via overloading WithOpenApi() method
     .WithOpenApi(o =>
     {
@@ -115,22 +120,25 @@ app.MapGet("/city/{id}", (string id) =>
         return o;
     });
 
-app.MapPost("/city/{id}", (string id, City city) =>
-    _city.TryAdd(id, city)
-    ? TypedResults.Created($"/city/{id}", city)
-    : (IResult)TypedResults.ValidationProblem(new Dictionary<string, string[]>
-    {
+app.MapPost("/city/{id}",
+    [EndpointName("AddCity")]
+    [EndpointSummary("Add a new city")]
+    [EndpointDescription("Add a new city entry with its name, province and population. Returns 404 if the city entry already exists with id")]
+    [Tags("city")]
+    [ProducesResponseType(typeof(City), 201)]
+    [ProducesResponseType(typeof(HttpValidationProblemDetails), 400)]
+    (string id, City city) =>
+        _city.TryAdd(id, city)
+        ? TypedResults.Created($"/city/{id}", city)
+        : (IResult)TypedResults.ValidationProblem(new Dictionary<string, string[]>
         {
-            "id", new[]
             {
-                "A city with this id already exists"
+                "id", new[]
+                {
+                    "A city with this id already exists"
+                }
             }
-        }
-    }))
-    .WithName("AddCity")
-    .WithTags("city")
-    .Produces<City>(statusCode: 201)
-    .ProducesValidationProblem();
+    })).WithOpenApi();
 
 app.Run();
 
