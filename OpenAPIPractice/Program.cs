@@ -87,10 +87,12 @@ app.MapRazorPages();
 
 var _city = new ConcurrentDictionary<string, City>();
 
-app.MapGet("/", () => "Hello World!");
+app.MapGet("/", () => "Hello World!")
+    .WithName("Index");
 
 // app.MapGroup("/city/", )
 app.MapGet("/city/", () => _city.Values)
+    .WithName("GetAllCityEntries")
     .WithTags("city")
     .Produces<ICollection<City>>()
     .WithSummary("Fetches all city entries")
@@ -99,6 +101,7 @@ app.MapGet("/city/", () => _city.Values)
 
 app.MapGet("/city/{id}", (string id) =>
     _city.TryGetValue(id, out var city) ? TypedResults.Ok(city) : (IResult)TypedResults.Problem(statusCode: 404))
+    .WithName("GetCityEntry")
     .WithTags("city")
     .Produces<City>()
     .ProducesProblem(statusCode: 404) // Description for the API; It will be shown in Swagger API explorer.
@@ -124,6 +127,7 @@ app.MapPost("/city/{id}", (string id, City city) =>
             }
         }
     }))
+    .WithName("AddCity")
     .WithTags("city")
     .Produces<City>(statusCode: 201)
     .ProducesValidationProblem();
