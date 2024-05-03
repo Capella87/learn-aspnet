@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.HttpLogging;
 using System.Collections.Concurrent;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.OpenApi;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -89,12 +90,22 @@ var _city = new ConcurrentDictionary<string, City>();
 app.MapGet("/", () => "Hello World!");
 
 // app.MapGroup("/city/", )
-app.MapGet("/city/", () => _city.Values);
+app.MapGet("/city/", () => _city.Values)
+    .WithTags("city")
+    .Produces<ICollection<City>>()
+    .WithSummary("Fetches all city entries")
+    .WithDescription("Fetches all registered city entries as a list, or returns a blank list if there's no entry")
+    .WithOpenApi();
+
 app.MapGet("/city/{id}", (string id) =>
     _city.TryGetValue(id, out var city) ? TypedResults.Ok(city) : (IResult)TypedResults.Problem(statusCode: 404))
     .WithTags("city")
     .Produces<City>()
-    .ProducesProblem(statusCode: 404);
+    .ProducesProblem(statusCode: 404) // Description for the API; It will be shown in Swagger API explorer.
+    .WithSummary("Fetches a city in Korea")
+    .WithDescription("Fetches a city entry by id, or returns 404 if there's no city entry with the ID exists")
+    .WithOpenApi();
+
 app.MapPost("/city/{id}", (string id, City city) =>
     _city.TryAdd(id, city)
     ? TypedResults.Created($"/city/{id}", city)
