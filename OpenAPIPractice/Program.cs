@@ -104,7 +104,13 @@ app.MapGet("/city/{id}", (string id) =>
     .ProducesProblem(statusCode: 404) // Description for the API; It will be shown in Swagger API explorer.
     .WithSummary("Fetches a city in Korea")
     .WithDescription("Fetches a city entry by id, or returns 404 if there's no city entry with the ID exists")
-    .WithOpenApi();
+    // Parameter description via overloading WithOpenApi() method
+    .WithOpenApi(o =>
+    {
+        o.Parameters[0].Description = "The id of the city entry to fetch";
+        o.Summary = "Fetches a city";
+        return o;
+    });
 
 app.MapPost("/city/{id}", (string id, City city) =>
     _city.TryAdd(id, city)
