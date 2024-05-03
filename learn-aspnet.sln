@@ -24,9 +24,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DIServicePractice", "DIServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigPractice", "ConfigPractice\ConfigPractice.csproj", "{F13BA38A-756D-4E4A-B598-4DA97F286F14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReverseProxy", "ReverseProxy\ReverseProxy.csproj", "{5FA94FB1-BAA4-4428-9189-199821CE3D58}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReverseProxy", "ReverseProxy\ReverseProxy.csproj", "{5FA94FB1-BAA4-4428-9189-199821CE3D58}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAPIPractice", "OpenAPIPractice\OpenAPIPractice.csproj", "{30933D0A-C956-40CF-B55C-3837B10A4764}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAPIPractice", "OpenAPIPractice\OpenAPIPractice.csproj", "{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenAPIPracticeClient", "OpenAPIPracticeClient\OpenAPIPracticeClient.csproj", "{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,14 +94,22 @@ Global
 		{5FA94FB1-BAA4-4428-9189-199821CE3D58}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5FA94FB1-BAA4-4428-9189-199821CE3D58}.Release|x64.ActiveCfg = Release|Any CPU
 		{5FA94FB1-BAA4-4428-9189-199821CE3D58}.Release|x64.Build.0 = Release|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Debug|x64.Build.0 = Debug|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|Any CPU.Build.0 = Release|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|x64.ActiveCfg = Release|Any CPU
-		{30933D0A-C956-40CF-B55C-3837B10A4764}.Release|x64.Build.0 = Release|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Debug|x64.Build.0 = Debug|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Release|x64.ActiveCfg = Release|Any CPU
+		{E92D9DF0-EC7C-4BF8-909C-3DB9ACC7A445}.Release|x64.Build.0 = Release|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Debug|x64.Build.0 = Debug|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Release|x64.ActiveCfg = Release|Any CPU
+		{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
