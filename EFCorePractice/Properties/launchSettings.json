@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "EFCoreHttpAndHttps": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:20621;http://localhost:10327"
+    }
+  },
+  "$schema": "http://json.schemastore.org/launchsettings.json"
+}
