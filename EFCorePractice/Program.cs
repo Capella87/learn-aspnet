@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +40,9 @@ builder.Host.UseDefaultServiceProvider(o =>
     o.ValidateOnBuild = true;
 });
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionWithSqlServer");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+
 builder.Services.AddAntiforgery();
 builder.Services.AddHttpLogging(opts =>
    opts.LoggingFields = HttpLoggingFields.RequestProperties);
@@ -71,3 +75,9 @@ app.MapRazorPages();
 app.MapGet("/", () => "Hello, EF Core and ASP.NET Core!");
 
 app.Run();
+
+// Primary constructor (Requires .NET 8 or later)
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+{
+    public DbSet<EFCorePractice.Recipe> Recipes { get; set; }
+}
