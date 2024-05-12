@@ -62,4 +62,15 @@ We can make a secrets comfortably on Visual Studio, or using .NET CLI with comma
 Using environment variable or key vault (e.g. Azure Key Vault, HashiCorp Vault) is the best option in production level.
 
 * EF Core Migration
+dotnet ef migrations add InitialCreate -- --environment Development
 dotnet ef update database -- --environment Development
+
+* Check pending model changes
+dotnet ef migrations has-pending-model-changes -- --environment Development
+
+* Create a swagger.json file locally without creating Client Project:
+Install Swashbuckle CLI
+dotnet tool install -g --version 6.5.0 Swashbuckle.AspNetCore.Cli
+
+Run the following command in the project directory:
+swagger tofile --output ./OpenAPIs/swagger.json .\bin\Debug\net8.0\EFCorePractice.dll v1
