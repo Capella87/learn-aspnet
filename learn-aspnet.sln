@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAPIPractice", "OpenAPIP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenAPIPracticeClient", "OpenAPIPracticeClient\OpenAPIPracticeClient.csproj", "{5B77F9C1-08F3-41C5-982C-D337F8DBE7DC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EFCorePractice", "EFCorePractice\EFCorePractice.csproj", "{C909062D-5EE8-4C19-A9F2-F1E125B99D1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCorePractice", "EFCorePractice\EFCorePractice.csproj", "{C909062D-5EE8-4C19-A9F2-F1E125B99D1C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

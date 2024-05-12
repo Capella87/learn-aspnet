@@ -132,7 +132,7 @@ cookingRoute.MapPut("/{id}", async (int id, UpdateRecipeCommand input, RecipeSer
 {
     if (await service.IsAvailableForUpdate(id))
     {
-        await service.UpdateRecipe(input);
+        await service.UpdateRecipe(id, input);
         return (IResult)TypedResults.NoContent();
     }
 
