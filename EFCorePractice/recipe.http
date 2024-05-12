@@ -1,0 +1,46 @@
+# For more info on HTTP files go to https://aka.ms/vs/httpfile
+
+GET https://localhost:20621/recipes/ HTTP/2
+
+### 
+POST https://localhost:20621/recipes/ HTTP/2
+Content-Type: application/json
+{
+    "name": "Tofu",
+    "timeToCookHours": 1,
+    "timeToCookMinutes": 30,
+    "method": "asdfasdfasdfasdfa",
+    "isVegitarian": true,
+    "isVegan": true,
+    "ingredients": [
+        {
+            "name": "Tofu",
+            "quantity": 1,
+            "unit": "block"
+        },
+        {
+            "name": "Soy Sauce",
+            "quantity": 1,
+            "unit": "tbsp"
+        }
+    ]
+}
+
+###
+GET https://localhost:20621/recipes/1/ HTTP/2
+
+
+###
+PUT https://localhost:20621/recipes/1/ HTTP/2
+Content-Type: application/json
+{
+    "name": "마파두부",
+    "timeToCookHours": 1,
+    "timeToCookMinutes": 30,
+    "method": "asdfasdfasdfasdfa",
+    "isVegitarian": true,
+    "isVegan": true
+}
+
+###
+DELETE https://localhost:20621/recipes/1/ HTTP/2
