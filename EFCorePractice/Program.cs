@@ -99,6 +99,13 @@ var cookingRoute = app.MapGroup("/recipes")
     .WithOpenApi()
     .WithTags("Recipes");
 
+cookingRoute.MapGet("/", async (RecipeService service) =>
+{
+    return await service.GetRecipes();
+})
+    .WithSummary("List all recipes")
+    .Produces<ICollection<RecipeSummaryViewModel>>(statusCode: StatusCodes.Status200OK);
+
 cookingRoute.MapPost("/", async (CreateRecipeCommand input, RecipeService service) =>
 {
     var id = await service.CreateRecipe(input);
@@ -108,21 +115,15 @@ cookingRoute.MapPost("/", async (CreateRecipeCommand input, RecipeService servic
     .Produces(StatusCodes.Status201Created)
     .ProducesProblem(StatusCodes.Status400BadRequest);
 
-cookingRoute.MapGet("/", async (RecipeService service) =>
-{
-    return await service.GetRecipes();
-})
-    .WithSummary("List all recipes")
-    .Produces<ICollection<RecipeSummaryViewModel>>(statusCode: StatusCodes.Status200OK);
-
 cookingRoute.MapGet("/{id}", async (int id, RecipeService service) =>
 {
     var recipe = await service.GetRecipeDetail(id);
 
     return recipe is null
         ? (IResult)TypedResults.NotFound()
-        : TypedResults.Ok(recipe);
+        : (IResult)TypedResults.Ok(recipe);
 })
+    .WithName("view-recipe")
     .WithSummary("Get recipe")
     .ProducesProblem(404)
     .Produces<RecipeDetailViewModel>();
@@ -155,7 +156,7 @@ app.Run();
 // Primary constructor (Requires .NET 8 or later)
 public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public DbSet<EFCorePractice.Recipe> Recipes { get; set; }
+    public DbSet<Recipe> Recipes { get; set; }
 }
 
 public class EditRecipeBase
