@@ -54,7 +54,6 @@ builder.Services.AddMvc();
 
 // Add OpenAPI tool, Swagger related services
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddSwaggerGen(x =>
     x.SwaggerDoc("v1", new OpenApiInfo
     {
