@@ -69,9 +69,9 @@ public class RecipeService
             .SingleOrDefaultAsync();
     }
 
-    public async Task UpdateRecipe(UpdateRecipeCommand cmd)
+    public async Task UpdateRecipe(int id, UpdateRecipeCommand cmd)
     {
-        var recipe = await _context.Recipes.FindAsync(cmd.Id);
+        var recipe = await _context.Recipes.FindAsync(id);
         if (recipe == null) throw new Exception("Unable to find the recipe");
         if (recipe.IsDeleted) throw new Exception("Unable to update a deleted recipe");
 
