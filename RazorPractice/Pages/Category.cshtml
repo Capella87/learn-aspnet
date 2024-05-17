@@ -1,0 +1,35 @@
+@page "{category}"
+@model ToDoList.CategoryModel
+
+@{
+    ViewData["Title"] = "ToDo List";
+}
+
+<h2>ToDo Items:</h2>
+@if (Model.Items.Any())
+{
+    <ul>
+        @foreach (var item in Model.Items)
+        {
+            <li>@item.Title</li>
+        }
+    </ul>
+}
+else
+{
+    <p>No items found.</p>
+}
+
+@*
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+*@

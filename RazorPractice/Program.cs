@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.HttpLogging;
 using System.Text.Json;
+using ToDoList;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<ToDoService>();
 
 // Routing configuration
 builder.Services.Configure<RouteOptions>(o =>
@@ -67,6 +69,7 @@ app.UseStatusCodePages();
 app.UseRouting();
 app.UseAuthorization();
 
+app.MapGet("/Category/", () => (IResult)TypedResults.Redirect("/Category/Game"));
 app.MapRazorPages();
 
 app.Run();
