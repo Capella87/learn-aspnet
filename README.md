@@ -9,6 +9,7 @@ This repository uses .NET 8. In every .NET release, I switch .NET version to lat
 
 ## Plans
 * Minimal Web API
+* Razor
 * MVC
 * OpenAPI
 * Authentication
