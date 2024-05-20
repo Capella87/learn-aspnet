@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ToDoList
 {
+    // PageModel is NOT a model
     public class CategoryModel : PageModel
     {
         private readonly ToDoService _service;
@@ -16,6 +17,7 @@ namespace ToDoList
         // Controller (handler)
         public ActionResult OnGet(string category)
         {
+            // Request data to model and retrieve processed data
             Items = _service.GetItemsForCategory(category);
 
             // Create a new page
