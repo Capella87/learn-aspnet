@@ -14,7 +14,7 @@ namespace RazorPractice.Pages
 
         public void OnGet()
         {
-
+            var url = Url.Page("Currency/View", new { code = "KRW" });
         }
     }
 }
