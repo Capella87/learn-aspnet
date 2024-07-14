@@ -16,11 +16,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddSingleton<ToDoService>();
 
 // Routing configuration
+// Kebab-case, lower-case, and trailing slash are common in these days.
 builder.Services.Configure<RouteOptions>(o =>
 {
     o.LowercaseUrls = true;
     o.AppendTrailingSlash = true;
-    o.LowercaseQueryStrings = false;
+    o.LowercaseQueryStrings = true;
 });
 
 // JSON configuration
