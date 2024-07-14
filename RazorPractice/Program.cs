@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.HttpLogging;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using ToDoList;
@@ -13,7 +14,16 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
 
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+// Set page routing configuration regarding kebab-case
+builder.Services.AddRazorPages()
+    .AddRazorPagesOptions(opts =>
+    {
+        opts.Conventions.Add(
+            new PageRouteTransformerConvention(
+                new KebabCaseParameterTransformer()));
+        opts.Conventions.AddPageRoute(
+            "/Search/Products/StartSearch", "/search-products");
+    });
 builder.Services.AddSingleton<ToDoService>();
 
 // Routing configuration
@@ -85,6 +95,6 @@ public class KebabCaseParameterTransformer : IOutboundParameterTransformer
             return null;
 
         return Regex.Replace(value.ToString(),
-            "([a-z])([A-Z]", "$1-$2").ToLower();
+            "([a-z])([A-Z])", "$1-$2").ToLower();
     }
 }
