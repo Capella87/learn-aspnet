@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.HttpLogging;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using ToDoList;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -74,3 +75,16 @@ app.MapGet("/Category/", () => (IResult)TypedResults.Redirect("/Category/Game"))
 app.MapRazorPages();
 
 app.Run();
+
+public class KebabCaseParameterTransformer : IOutboundParameterTransformer
+{
+    // Convert PascalCase to kebab-case with lowercase. Using regular expression
+    public string TransformOutbound(object? value)
+    {
+        if (value is null)
+            return null;
+
+        return Regex.Replace(value.ToString(),
+            "([a-z])([A-Z]", "$1-$2").ToLower();
+    }
+}
