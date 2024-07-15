@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCorePractice", "EFCorePra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPractice", "RazorPractice\RazorPractice.csproj", "{70060BC8-3911-4168-898E-30D05BFF92AE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorPractice", "BlazorPractice\BlazorPractice.csproj", "{4821354D-B2EF-48F8-8A10-8B140EB429A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +132,14 @@ Global
 		{70060BC8-3911-4168-898E-30D05BFF92AE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70060BC8-3911-4168-898E-30D05BFF92AE}.Release|x64.ActiveCfg = Release|Any CPU
 		{70060BC8-3911-4168-898E-30D05BFF92AE}.Release|x64.Build.0 = Release|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Debug|x64.Build.0 = Debug|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|x64.ActiveCfg = Release|Any CPU
+		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
