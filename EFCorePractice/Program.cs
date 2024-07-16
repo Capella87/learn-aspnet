@@ -31,7 +31,7 @@ builder.Services.Configure<RouteOptions>(o =>
 {
     o.LowercaseUrls = true;
     o.AppendTrailingSlash = true;
-    o.LowercaseQueryStrings = false;
+    o.LowercaseQueryStrings = true;
 });
 
 // JSON configuration
