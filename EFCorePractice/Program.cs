@@ -153,10 +153,13 @@ cookingRoute.MapDelete("/{id}", async (int id, RecipeService service) =>
 
 app.Run();
 
-// Primary constructor (Requires .NET 8 or later)
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class AppDbContext : DbContext
 {
     public DbSet<Recipe> Recipes { get; set; }
+
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    {
+    }
 }
 
 public class EditRecipeBase
