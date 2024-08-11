@@ -34,7 +34,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EFCorePractice", "EFCorePra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPractice", "RazorPractice\RazorPractice.csproj", "{70060BC8-3911-4168-898E-30D05BFF92AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorPractice", "BlazorPractice\BlazorPractice.csproj", "{4821354D-B2EF-48F8-8A10-8B140EB429A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPractice", "BlazorPractice\BlazorPractice.csproj", "{4821354D-B2EF-48F8-8A10-8B140EB429A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RazorPageHandlerPractice", "RazorPageHandlerPractice\RazorPageHandlerPractice.csproj", "{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -140,6 +142,14 @@ Global
 		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|x64.ActiveCfg = Release|Any CPU
 		{4821354D-B2EF-48F8-8A10-8B140EB429A5}.Release|x64.Build.0 = Release|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Debug|x64.Build.0 = Debug|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|x64.ActiveCfg = Release|Any CPU
+		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
