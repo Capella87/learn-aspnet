@@ -1,0 +1,24 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "bootstrap@5.3.3",
+      "provider": "jsdelivr",
+      "destination": "wwwroot/lib/bootstrap/",
+      "files": [
+        "dist/js/bootstrap.bundle.min.js",
+        "dist/css/bootstrap.min.css"
+      ]
+    },
+    {
+      "library": "aspnet-client-validation@0.10.1",
+      "provider": "jsdelivr",
+      "destination": "wwwroot/lib/aspnetvalidation",
+      "files": [
+        "dist/aspnet-validation.css",
+        "dist/aspnet-validation.js"
+      ]
+    }
+  ]
+}
