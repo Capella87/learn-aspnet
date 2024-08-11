@@ -2,12 +2,13 @@ root = true
 
 [*]
 charset = utf-8
+indent_size = 4
 indent_style = space
 insert_final_newline = true
 
-[*.{cs,cshtml,html,htm,js,tsc,tsx,jsx}]
-indent_size = 4
-
-[*.{toml,json,yaml,yml,css}]
+[*.{json,yaml,yml,css,html,scss,md}]
 indent_size = 2
 insert_final_newline = false
+
+[*.{sln,cshtml,razor}]
+charset = utf-8-bom
