@@ -16,6 +16,7 @@ namespace RazorPageHandlerPractice.Pages
         }
 
         // Bind property
+        [BindProperty]
         public BindingModel Input { get; set; }
         public List<Game> Results { get; set; }
 
@@ -24,7 +25,7 @@ namespace RazorPageHandlerPractice.Pages
         {
         }
 
-        public IActionResult OnPost(int max)
+        public IActionResult OnPost()
         {
             if (ModelState.IsValid)
             {

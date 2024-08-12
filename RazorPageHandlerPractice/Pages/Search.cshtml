@@ -1,4 +1,27 @@
 ﻿@page
-@model RazorPageHandlerPractice.Pages.SearchModel
+@model SearchModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
+
+    <div class="container">
+        <p>Enter a search term (e.g. Age)</p>
+        <form method="post">
+            Search Term:
+            <input asp-for="Input.SearchTerm" />
+            <input type="submit" />
+        </form>
+    </div>
+
+    <div class="container">
+        @if (Model.Results != null)
+        {
+            @:Results:
+            <ul>
+                @foreach (var product in Model.Results)
+                {
+                    <li>@product.Name</li>
+                }
+            </ul>
+        }
+    </div>
 }
