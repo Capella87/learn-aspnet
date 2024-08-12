@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
+using RazorPageHandlerPractice.Services;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
@@ -56,6 +57,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddHealthChecks();
 builder.Services.AddRazorPages();
 builder.Services.AddMvc();
+builder.Services.AddSingleton<SearchService>();
 
 var app = builder.Build();
 
