@@ -38,6 +38,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorPractice", "BlazorPra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RazorPageHandlerPractice", "RazorPageHandlerPractice\RazorPageHandlerPractice.csproj", "{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JWTToken", "JWTToken\JWTToken.csproj", "{EBF98BA0-BE18-479F-9454-6761F57FFFCB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,6 +152,14 @@ Global
 		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|x64.ActiveCfg = Release|Any CPU
 		{2169EE3D-1FB2-4DF0-B240-795AA03BA2B6}.Release|x64.Build.0 = Release|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Debug|x64.Build.0 = Debug|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Release|x64.ActiveCfg = Release|Any CPU
+		{EBF98BA0-BE18-479F-9454-6761F57FFFCB}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
