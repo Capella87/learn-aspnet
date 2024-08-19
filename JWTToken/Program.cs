@@ -68,11 +68,12 @@ try
     app.UseStaticFiles();
     app.UseAuthorization();
     app.UseAntiforgery();
-    app.UseRouting();
 
     app.MapGet("/", () => "Hello World!");
     app.MapGet("/secret", (ClaimsPrincipal user) => $"Hello {user.Identity.Name}!")
         .RequireAuthorization();
+    app.MapGet("/secret2", (ClaimsPrincipal user) => $"Hello {user.Identity.Name}! Welcome to another secret!")
+        .RequireAuthorization(p => p.RequireClaim("scope", "jwttoken:anothersecret"));
 
     app.Run();
 }
