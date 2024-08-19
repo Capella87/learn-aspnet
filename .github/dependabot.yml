@@ -16,12 +16,14 @@ updates:
     commit-message:
       prefix: "[.NET]"
     groups:
-      microsoft-extensions:
+      dotnet-version-dependants:
         dependency-type: "development"
         applies-to: version-updates
         patterns:
         - "Microsoft.Extensions.*"
-        - "System.*"
+        - "System.* "
+        - "Microsoft.AspNetCore*"
+        - "Microsoft.EntityFrameworkCore*"
         update-types:
         - "minor"
         - "patch"
@@ -37,9 +39,15 @@ updates:
         exclude-patterns:
         - "Microsoft.Extensions.*"
         - "System.*"
+        - "Microsoft.AspNetCore*"
+        - "Microsoft.EntityFrameworkCore*"
 
     ignore:
     - dependency-name: "Microsoft.Extensions.*"
       update-types: ["version-update:semver-major"]
     - dependency-name: "System.*"
+      update-types: ["version-update:semver-major"]
+    - dependency-name: "Micrsoft.AspNetCore*"
+      update-types: ["version-update:semver-major"]
+    - dependency-name: "Microsoft.EntityFrameworkCore*"
       update-types: ["version-update:semver-major"]
