@@ -49,7 +49,10 @@ try
         .AddJwtBearer();
 
     var app = builder.Build();
-    app.UseSerilogRequestLogging();
+    app.UseSerilogRequestLogging((opts) =>
+    {
+        opts.MessageTemplate = "HTTP {} {RequestMethod} {RequestPath} responded {StatusCode}";
+    });
 
     if (!app.Environment.IsDevelopment())
     {
