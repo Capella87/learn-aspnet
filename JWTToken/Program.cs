@@ -14,7 +14,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 try
 {
-    Log.Information("Starting web program...");
+    Log.Information("Starting WebApplication...");
     var builder = WebApplication.CreateBuilder(args);
     builder.Configuration.AddConfiguration(configuration);
     builder.Services.AddSerilog();
@@ -51,6 +51,7 @@ try
     var app = builder.Build();
     app.UseSerilogRequestLogging((opts) =>
     {
+        // TODO: Add HTTP version, User-Agent, and response code name
         opts.MessageTemplate = "HTTP {} {RequestMethod} {RequestPath} responded {StatusCode}";
     });
 
