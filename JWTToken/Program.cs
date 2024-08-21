@@ -1,6 +1,7 @@
 using Serilog;
 using Microsoft.Extensions.Configuration;
 using System.Security.Claims;
+using Serilog.Events;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -51,8 +52,15 @@ try
     var app = builder.Build();
     app.UseSerilogRequestLogging((opts) =>
     {
-        // TODO: Add HTTP version, User-Agent, and response code name
-        opts.MessageTemplate = "HTTP {} {RequestMethod} {RequestPath} responded {StatusCode}";
+        opts.MessageTemplate = "{Protocol} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        opts.GetMessageTemplateProperties = (HttpContext httpContext, string requestPath, double elapsedMs, int statusCode) =>
+        [
+            new LogEventProperty("Protocol", new ScalarValue(httpContext.Request.Protocol)),
+            new LogEventProperty("RequestMethod", new ScalarValue(httpContext.Request.Method)),
+            new LogEventProperty("RequestPath", new ScalarValue(requestPath)),
+            new LogEventProperty("StatusCode", new ScalarValue(statusCode)),
+            new LogEventProperty("Elapsed", new ScalarValue(elapsedMs))
+        ];
     });
 
     if (!app.Environment.IsDevelopment())
