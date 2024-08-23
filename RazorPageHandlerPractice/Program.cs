@@ -1,90 +1,118 @@
-using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using RazorPageHandlerPractice.Services;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using Serilog.Events;
+using Microsoft.Extensions.Logging.Configuration;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddEnvironmentVariables()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development"}.json",
+        optional: true,
+        reloadOnChange: true)
+    .Build();
 
-builder.Configuration.Sources.Clear();
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json"
-    , optional: true
-    , reloadOnChange: true);
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
 
+try
+{
+    Log.Information("Starting WebApplication...");
+    var builder = WebApplication.CreateBuilder(args);
+    builder.Configuration.AddConfiguration(configuration);
+    builder.Services.AddSerilog();
 
-// Add services to the container.
-// Set page routing configuration regarding kebab-case
-builder.Services.AddRazorPages()
-    .AddRazorPagesOptions(opts =>
+    // Add services to the container.
+    // Set page routing configuration regarding kebab-case
+    builder.Services.AddRazorPages()
+        .AddRazorPagesOptions(opts =>
+        {
+            opts.Conventions.Add(
+                new PageRouteTransformerConvention(
+                    new KebabCaseParameterTransformer()));
+            opts.Conventions.AddPageRoute(
+                "/Search/Products/StartSearch", "/search-products");
+        });
+
+    // Routing configuration
+    // Kebab-case, lower-case, and trailing slash are common in these days.
+    builder.Services.Configure<RouteOptions>(o =>
     {
-        opts.Conventions.Add(
-            new PageRouteTransformerConvention(
-                new KebabCaseParameterTransformer()));
-        opts.Conventions.AddPageRoute(
-            "/Search/Products/StartSearch", "/search-products");
+        o.LowercaseUrls = true;
+        o.AppendTrailingSlash = true;
+        o.LowercaseQueryStrings = true;
     });
 
-// Routing configuration
-// Kebab-case, lower-case, and trailing slash are common in these days.
-builder.Services.Configure<RouteOptions>(o =>
-{
-    o.LowercaseUrls = true;
-    o.AppendTrailingSlash = true;
-    o.LowercaseQueryStrings = true;
-});
+    // JSON configuration
+    builder.Services.ConfigureHttpJsonOptions(o =>
+    {
+        o.SerializerOptions.AllowTrailingCommas = false;
+        o.SerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+        o.SerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 
-// JSON configuration
-builder.Services.ConfigureHttpJsonOptions(o =>
-{
-    o.SerializerOptions.AllowTrailingCommas = false;
-    o.SerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
-    o.SerializerOptions.PropertyNameCaseInsensitive = true;
-});
+    // Enable Scope Validation always (By default, it is only enabled in development)
+    builder.Host.UseDefaultServiceProvider(o =>
+    {
+        o.ValidateScopes = true;
+        o.ValidateOnBuild = true;
+    });
 
-// Enable Scope Validation always (By default, it is only enabled in development)
-builder.Host.UseDefaultServiceProvider(o =>
-{
-    o.ValidateScopes = true;
-    o.ValidateOnBuild = true;
-});
+    builder.Services.AddAntiforgery();
+    builder.Services.AddProblemDetails();
+    builder.Services.AddHealthChecks();
+    builder.Services.AddRazorPages();
+    builder.Services.AddMvc();
+    builder.Services.AddSingleton<SearchService>();
 
-builder.Services.AddAntiforgery();
-builder.Services.AddHttpLogging(opts =>
-   opts.LoggingFields = HttpLoggingFields.RequestProperties);
-builder.Logging.AddFilter("Microsoft.AspNetCore.HttpLogging", LogLevel.Debug);
-builder.Services.AddProblemDetails();
-builder.Services.AddHealthChecks();
-builder.Services.AddRazorPages();
-builder.Services.AddMvc();
-builder.Services.AddSingleton<SearchService>();
+    var app = builder.Build();
+    app.UseSerilogRequestLogging((opts) =>
+    {
+        opts.MessageTemplate = "{Protocol} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        opts.GetMessageTemplateProperties = (HttpContext httpContext, string requestPath, double elapsedMs, int statusCode) =>
+        [
+            new LogEventProperty("Protocol", new ScalarValue(httpContext.Request.Protocol)),
+            new LogEventProperty("RequestMethod", new ScalarValue(httpContext.Request.Method)),
+            new LogEventProperty("RequestPath", new ScalarValue(requestPath)),
+            new LogEventProperty("StatusCode", new ScalarValue(statusCode)),
+            new LogEventProperty("Elapsed", new ScalarValue(elapsedMs))
+        ];
+    });
 
-var app = builder.Build();
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Error");
+    }
+    else
+    {
+        app.UseDeveloperExceptionPage();
+    }
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Error");
+    app.UseHsts();
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseAntiforgery();
+    app.UseStatusCodePages();
+    app.UseAuthorization();
+
+    app.MapGet("/Category/", () => (IResult)TypedResults.Redirect("/Category/Game"));
+    app.MapRazorPages();
+
+    app.Run();
 }
-else
+catch (Exception ex)
 {
-    app.UseDeveloperExceptionPage();
+    Log.Fatal(ex, "Host application unexpectedly terminated");
 }
-
-app.UseHsts();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseHttpLogging();
-app.UseAntiforgery();
-app.UseStatusCodePages();
-
-app.UseRouting();
-app.UseAuthorization();
-
-app.MapGet("/Category/", () => (IResult)TypedResults.Redirect("/Category/Game"));
-app.MapRazorPages();
-
-app.Run();
+finally
+{
+    Log.CloseAndFlush();
+}
 
 public class KebabCaseParameterTransformer : IOutboundParameterTransformer
 {
