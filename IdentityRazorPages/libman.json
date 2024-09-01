@@ -21,6 +21,11 @@
         "dist/aspnet-validation.min.js",
         "dist/aspnet-validation.min.js.map"
       ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "bootstrap-icons@1.11.3",
+      "destination": "wwwroot/lib/bootstrap-icons/"
     }
   ]
 }
