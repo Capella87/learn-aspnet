@@ -99,7 +99,8 @@ try
     app.Run();
 
 }
-catch (Exception ex)
+// https://github.com/dotnet/efcore/issues/29923#issuecomment-2092619682
+catch (Exception ex) when (ex is not HostAbortedException && ex.Source != "Microsoft.EntityFrameworkCore.Design")
 {
     Log.Fatal(ex, "WebApplication unexpectedly terminated...");
 }
