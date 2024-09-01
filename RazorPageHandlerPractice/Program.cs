@@ -63,7 +63,10 @@ try
     });
 
     builder.Services.AddAntiforgery();
+
+    // Show details according to RFC9110
     builder.Services.AddProblemDetails();
+
     builder.Services.AddHealthChecks();
     builder.Services.AddRazorPages();
     builder.Services.AddMvc();
@@ -97,7 +100,7 @@ try
     app.UseHttpsRedirection();
     app.UseStaticFiles();
     app.UseAntiforgery();
-    app.UseStatusCodePages();
+    app.UseStatusCodePagesWithReExecute("/Errors/{0}");
     app.UseAuthorization();
 
     app.MapGet("/Category/", () => (IResult)TypedResults.Redirect("/Category/Game"));

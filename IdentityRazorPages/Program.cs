@@ -56,6 +56,7 @@ try
         options.UseSqlServer(connectionString));
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+    // Add ASP.NET Core Identity and its services
     builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
         .AddEntityFrameworkStores<ApplicationDbContext>();
     builder.Services.AddRazorPages();
@@ -89,9 +90,9 @@ try
     }
     app.UseHttpsRedirection();
     app.UseAntiforgery();
+    app.UseRouting();
     app.UseAuthentication();
     app.UseStaticFiles();
-    app.UseRouting();
     app.UseAuthorization();
     app.MapRazorPages();
 
