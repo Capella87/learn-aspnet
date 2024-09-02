@@ -104,6 +104,11 @@ catch (Exception ex) when (ex is not HostAbortedException && ex.Source != "Micro
 {
     Log.Fatal(ex, "WebApplication unexpectedly terminated...");
 }
+catch (Exception ex) when (ex is HostAbortedException && ex.Source == "Microsoft.EntityFrameworkCore.Design")
+{
+    Log.Information(messageTemplate: "Maybe you've migrated your database with Entity Framework Core.");
+    Log.Information("Closing WebApplication...");
+}
 finally
 {
     Log.CloseAndFlush();
