@@ -1,3 +1,5 @@
+name: .NET Deployments
+
 on:
   workflow_dispatch:
 
