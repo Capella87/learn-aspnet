@@ -4,6 +4,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.OpenApi;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -53,14 +54,37 @@ builder.Services.AddRazorPages();
 builder.Services.AddMvc();
 
 // Add OpenAPI tool, Swagger related services
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(x =>
-    x.SwaggerDoc("v1", new OpenApiInfo
+//builder.Services.AddEndpointsApiExplorer();
+//builder.Services.AddSwaggerGen(x =>
+//    x.SwaggerDoc("v1", new OpenApiInfo
+//    {
+//        Title = "KoreanCityAPI",
+//        Description = "An API for Korean cities and counties",
+//        Version = "v1"
+//    }));
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, _, _) =>
     {
-        Title = "KoreanCityAPI",
-        Description = "An API for Korean cities and counties",
-        Version = "v1"
-    }));
+        document.Info.Title = "KoreanCityAPI";
+        document.Info.Description = "An API for Korean cities and counties";
+        document.Info.Version = "v1";
+
+        document.Info.Contact = new OpenApiContact()
+        {
+            Name = "Capella87",
+            Url = new Uri("https://github.com/Capella87"),
+        };
+
+        document.Info.License = new OpenApiLicense()
+        {
+            Name = "MIT",
+            Url = new Uri("https://opensource.org/licenses/MIT"),
+        };
+
+        return Task.CompletedTask;
+    });
+});
 
 var app = builder.Build();
 
@@ -71,8 +95,8 @@ app.UseAntiforgery();
 app.UseStatusCodePages();
 
 // OpenAPI
-app.UseSwagger();
-app.UseSwaggerUI();
+app.MapOpenApi();
+app.MapScalarApiReference();
 
 if (app.Environment.IsDevelopment())
 {
@@ -100,7 +124,7 @@ app.MapGet("/city/",
     () => _city.Values)
     .WithOpenApi();
 
-app.MapGet("/city/{id}", 
+app.MapGet("/city/{id}",
     [EndpointName("GetCityEntry")]
     [Tags("city")]
     [EndpointDescription("Fetches a city entry by id, or returns 404 if there's no city entry with the ID exists")]
