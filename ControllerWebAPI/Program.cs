@@ -6,6 +6,7 @@ using Serilog.Events;
 using ControllerWebAPI.Controllers;
 using ControllerWebAPI.Services;
 using System.Diagnostics;
+using Microsoft.Net.Http.Headers;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -50,18 +51,7 @@ try
         o.ValidateOnBuild = true;
     });
 
-    builder.Services.AddProblemDetails(config =>
-    {
-        config.CustomizeProblemDetails = (ctx) =>
-        {
-            ctx.ProblemDetails.Type ??= "https://tools.ietf.org/html/rfc7231#section-6.5.4";
-            if (!ctx.ProblemDetails.Extensions.ContainsKey("traceId"))
-            {
-                var tId = Activity.Current?.Id ?? ctx.HttpContext.TraceIdentifier;
-                ctx.ProblemDetails.Extensions.Add(new KeyValuePair<string, object?>("traceId", tId));
-            }
-        };
-    });
+    builder.Services.AddProblemDetails();
     builder.Services.AddAntiforgery();
     if (builder.Environment.IsDevelopment())
     {
@@ -89,7 +79,9 @@ try
             new LogEventProperty("RequestMethod", new ScalarValue(httpContext.Request.Method)),
             new LogEventProperty("RequestPath", new ScalarValue(requestPath)),
             new LogEventProperty("StatusCode", new ScalarValue(statusCode)),
-            new LogEventProperty("Elapsed", new ScalarValue(elapsedMs))
+            new LogEventProperty("Elapsed", new ScalarValue(elapsedMs)),
+            new LogEventProperty("UserAgent", new ScalarValue(httpContext.Request.Headers[HeaderNames.UserAgent].ToString())),
+            new LogEventProperty("ContentType", new ScalarValue(httpContext.Request.ContentType)),
         ];
     });
 
