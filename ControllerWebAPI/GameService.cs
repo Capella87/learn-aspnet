@@ -28,6 +28,11 @@ public class GameService
             .ToListAsync();
     }
 
+    public async Task<bool> IsUrlNameExist(string urlName)
+    {
+        return await _context.Games.AnyAsync(g => g.UrlName == urlName);
+    }
+
     public async Task<Game?> GetGameByUrlName(string urlName)
     {
         // TODO : threading issue
@@ -42,46 +47,36 @@ public class GameService
     /// <returns>Returns the generated entity or null if the system failed to add the entity.</returns>
     public async Task<Game?> AddGame(string urlName, GameCreateCommand cmd)
     {
-        var duplicateUrlNameGame = await GetGameByUrlName(urlName);
-
-        if (duplicateUrlNameGame != null)
+        if (await _context.Games.AnyAsync(x => x.UrlName == urlName))
         {
-            // TODO: Where to place invoking logging...
-            _logger.LogDebug("Game with urlName {UrlName} already exists.", urlName);
-            return null;
+            throw new Exception($"Id {urlName} already exists.");
         }
 
         var game = cmd.Create();
-        var entity = _context.Games.Add(game).Entity;
+        var entity = _context.Games.Add(game)?.Entity;
+        ArgumentNullException.ThrowIfNull(entity, $"Failed to add the game with id {urlName}.");
         await _context.SaveChangesAsync();
 
         return entity;
     }
 
-    public async Task<string?> DeleteGame(string urlName)
+    public async Task DeleteGame(string urlName)
     {
         // Is it a good idea to throw an exception if the game is not found????
         // Answer : You should not use exceptions as regular flow of control.
         // https://stackoverflow.com/questions/76647772/when-should-i-throw-exception-vs-return-error-actionresult-in-asp-net-core-web
-        var game = await GetGameByUrlName(urlName);
-        if (game == null) return null;
+        var game = await _context.Games.FindAsync(urlName);
+        if (game == null) throw new Exception($"Game with Id {urlName} not found.");
 
         var result = _context.Games.Remove(game)?.Entity;
-
         ArgumentNullException.ThrowIfNull(result, "Failed to delete the game.");
         await _context.SaveChangesAsync();
-
-        return result.UrlName;
     }
 
     public async Task<Game?> UpdateGame(string urlName, UpdateGameCommand cmd)
     {
-        var game = await GetGameByUrlName(urlName);
-        if (game == null)
-        {
-            _logger.LogDebug("Could not find game with urlName {UrlName}", urlName);
-            return null;
-        }
+        var game = await _context.Games.FindAsync(urlName);
+        if (game == null) throw new Exception($"Game with id {urlName} not found.");
 
         cmd.Update(game);
         var result = _context.Update(game)?.Entity;

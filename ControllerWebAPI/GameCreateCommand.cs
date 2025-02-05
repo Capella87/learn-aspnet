@@ -25,8 +25,11 @@ public class GameCreateCommand
 
     public virtual Game Create()
     {
-        return new Game(UrlName, Name)
+        return new Game()
         {
+            Id = new Guid(),
+            UrlName = UrlName,
+            Name = Name,
             ReleaseDate = ReleaseDate,
             Genres = Genres,
             Publisher = Publisher,

@@ -29,6 +29,5 @@ public class Game : IEntity
 
     public Game()
     {
-        this.Id = new Guid();
     }
 }

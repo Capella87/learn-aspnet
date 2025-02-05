@@ -4,6 +4,7 @@ using ControllerWebAPI.Models;
 using ControllerWebAPI.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ControllerWebAPI.Commands;
+using Microsoft.EntityFrameworkCore;
 
 namespace ControllerWebAPI.Controllers;
 
@@ -20,25 +21,30 @@ public class GameController : ControllerBase
     }
 
     [HttpGet("/games")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IEnumerable<Game>> Index()
     {
         return await _gameService.GetAllGames();
     }
 
-
     // These are all actions
     [HttpGet("game/{urlName}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Game>> Get(string urlName)
     {
         // If found
-        return await _gameService.GetGameByUrlName(urlName) switch
+        return (await _gameService.GetGameByUrlName(urlName) switch
         {
-            Game game => game,
+            Game game => Ok(game),
             _ => NotFound()
-        };
+        });
     }
 
     [HttpPost("/game")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<Game>> Add([FromBody] GameCreateCommand newEntity)
     {
         //if (_gameService.GetGameByUrlNam.Any(_games => _games.Id == newGame.Id))
@@ -49,29 +55,64 @@ public class GameController : ControllerBase
         //    return Problem(detail: $"Game with id {newGame.Id} already exists.", statusCode: StatusCodes.Status400BadRequest);
         //}
 
+        if (!await _gameService.IsUrlNameExist(newEntity.UrlName))
+        {
+            return Problem(detail: $"Game with id {newEntity.UrlName} already exists.", statusCode: StatusCodes.Status400BadRequest);
+        }
+
         var result = await _gameService.AddGame(newEntity.UrlName, newEntity);
 
         return result == null ?
-            Problem(detail: $"Game with id {newEntity.UrlName} already exists.", statusCode: StatusCodes.Status400BadRequest)
+            Problem(detail: $"Failed to add a new Game with id {newEntity.UrlName}", statusCode: StatusCodes.Status500InternalServerError)
             : CreatedAtAction(nameof(Get), new { urlName = result.UrlName }, result);
     }
 
     [HttpDelete("/game/{urlName}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Delete([FromRoute] string urlName)
     {
-        var result = await _gameService.DeleteGame(urlName);
-        if (result == null)
+        if (!await _gameService.IsUrlNameExist(urlName))
         {
             return Problem(detail: $"Game with id {urlName} does not exist.", statusCode: StatusCodes.Status404NotFound);
         }
 
-        return await Task.FromResult(NoContent());
+        try
+        {
+            await _gameService.DeleteGame(urlName);
+        }
+        catch (Exception ex)
+        {
+            // Return 500 Internal Server Error with ProblemDetails format
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+        }
+
+        return Ok();
     }
 
     [HttpPut("/game/{urlName}")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult> Update([FromRoute] string urlName, [FromBody] UpdateGameCommand cmd)
     {
         // Validation
-    }
+        if (!await _gameService.IsUrlNameExist(urlName))
+        {
+            return Problem(detail: $"Game with id {urlName} does not exist.", statusCode: StatusCodes.Status404NotFound);
+        }
 
+        try
+        {
+            var result = await _gameService.UpdateGame(urlName, cmd);
+            return CreatedAtRoute(nameof(Get), new { urlName = result.UrlName }, result);
+        }
+        catch (DbUpdateConcurrencyException ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status409Conflict);
+        }
+        catch (Exception ex)
+        {
+            return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+        }
+    }
 }
