@@ -1,13 +1,11 @@
-using ControllerWebAPI.Models;
+namespace ControllerWebAPI.Models;
 
-namespace ControllerWebAPI.Commands;
-
-public interface ICreateCommand<T>
+public interface ICreate<T> where T : IEntity
 {
     public T Create();
 }
 
-public class GameCreateCommand
+public class GameCreateCommand : ICreate<Game>
 {
     public required string Name { get; set; }
 
