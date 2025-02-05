@@ -1,7 +1,6 @@
 namespace ControllerWebAPI.Services;
 
 using ControllerWebAPI;
-using ControllerWebAPI.Commands;
 using ControllerWebAPI.Data;
 using ControllerWebAPI.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -19,13 +18,16 @@ public class GameService
         _logger = loggerFactory.CreateLogger<GameService>();
     }
 
-    public async Task<ICollection<Game>> GetAllGames()
+    public async Task<ICollection<GameViewModel>> GetAllGames()
     {
         // Return all games in the database with async
         // Returns id anyway...
-        return await _context.Games
+        // TODO : Check Performance of this code.
+        var result = await _context.Games
             .OrderBy(g => g.UrlName)
             .ToListAsync();
+
+        return result.ConvertAll(g => new GameViewModel(g));
     }
 
     public async Task<bool> IsUrlNameExist(string urlName)
@@ -45,7 +47,7 @@ public class GameService
     /// <param name="urlName">Another primary key of Game entity. Used in URL.</param>
     /// <param name="cmd">Command class to generate Game entity.</param>
     /// <returns>Returns the generated entity or null if the system failed to add the entity.</returns>
-    public async Task<Game?> AddGame(string urlName, GameCreateCommand cmd)
+    public async Task<GameViewModel?> AddGame(string urlName, GameCreateCommand cmd)
     {
         if (await _context.Games.AnyAsync(x => x.UrlName == urlName))
         {
@@ -57,7 +59,7 @@ public class GameService
         ArgumentNullException.ThrowIfNull(entity, $"Failed to add the game with id {urlName}.");
         await _context.SaveChangesAsync();
 
-        return entity;
+        return new GameViewModel(game);
     }
 
     public async Task DeleteGame(string urlName)
@@ -73,17 +75,17 @@ public class GameService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Game?> UpdateGame(string urlName, UpdateGameCommand cmd)
+    public async Task<GameViewModel?> UpdateGame(string urlName, GameUpdateCommand cmd)
     {
         var game = await _context.Games.FindAsync(urlName);
         if (game == null) throw new Exception($"Game with id {urlName} not found.");
 
         cmd.Update(game);
         var result = _context.Update(game)?.Entity;
-
         ArgumentNullException.ThrowIfNull(result, "Failed to update the game.");
         await _context.SaveChangesAsync();
-        return game;
+
+        return new GameViewModel(game);
     }
 
     // public async AddNewGame()
