@@ -56,13 +56,13 @@ public class GameController : ControllerBase
 
         if (await _gameService.IsUrlNameExist(newEntity.UrlName))
         {
-            return Problem(detail: $"Game with id {newEntity.UrlName} already exists.", statusCode: StatusCodes.Status400BadRequest);
+            return Problem(detail: $"Game with id '{newEntity.UrlName}' already exists.", statusCode: StatusCodes.Status400BadRequest);
         }
 
         var result = await _gameService.AddGame(newEntity.UrlName, newEntity);
 
         return result == null ?
-            Problem(detail: $"Failed to add a new Game with id {newEntity.UrlName}", statusCode: StatusCodes.Status500InternalServerError)
+            Problem(detail: $"Failed to add a new Game with id '{newEntity.UrlName}'.", statusCode: StatusCodes.Status500InternalServerError)
             : CreatedAtAction(nameof(Get), new { urlName = result.UrlName }, result);
     }
 
@@ -73,7 +73,7 @@ public class GameController : ControllerBase
     {
         if (!await _gameService.IsUrlNameExist(urlName))
         {
-            return Problem(detail: $"Game with id {urlName} does not exist.", statusCode: StatusCodes.Status404NotFound);
+            return Problem(detail: $"Game with id '{urlName}' does not exist.", statusCode: StatusCodes.Status404NotFound);
         }
 
         try
@@ -99,7 +99,7 @@ public class GameController : ControllerBase
         // Validation
         if (!await _gameService.IsUrlNameExist(urlName))
         {
-            return Problem(detail: $"Game with id {urlName} does not exist.", statusCode: StatusCodes.Status404NotFound);
+            return Problem(detail: $"Game with id '{urlName}' does not exist.", statusCode: StatusCodes.Status404NotFound);
         }
 
         try
