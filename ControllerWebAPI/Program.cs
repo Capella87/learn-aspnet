@@ -7,6 +7,8 @@ using ControllerWebAPI.Controllers;
 using ControllerWebAPI.Services;
 using System.Diagnostics;
 using Microsoft.Net.Http.Headers;
+using ControllerWebAPI.Data;
+using Microsoft.EntityFrameworkCore;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -14,6 +16,7 @@ var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development"}.json",
         optional: true, reloadOnChange: true)
+    .AddUserSecrets<Program>()
     .Build();
 
 Log.Logger = new LoggerConfiguration()
@@ -60,7 +63,9 @@ try
 
 
     // Add services to the container.
-    builder.Services.AddSingleton<GameService, GameService>();
+    builder.Services.AddScoped<GameService, GameService>();
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
     // AddControllers and MapControllers for MVC Web API.
     builder.Services.AddControllers();
