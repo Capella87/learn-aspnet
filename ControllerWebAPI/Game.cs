@@ -1,8 +1,12 @@
+using System.ComponentModel.DataAnnotations;
 namespace ControllerWebAPI.Models;
 
-public class Game
+public class Game : IEntity
 {
-    public required string Id { get; set; }
+    [Key]
+    public required Guid Id { get; set; }
+
+    public required string UrlName { get; set; }
 
     public required string Name { get; set; }
 
@@ -16,13 +20,15 @@ public class Game
 
     public string? Description { get; set; }
 
-    public Game(string Id, string Name)
+    public Game(string UrlName, string Name)
     {
-        this.Id = Id;
+        this.Id = new Guid();
+        this.UrlName = UrlName;
         this.Name = Name;
     }
 
     public Game()
     {
+        this.Id = new Guid();
     }
 }
