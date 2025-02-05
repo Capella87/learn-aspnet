@@ -30,12 +30,12 @@ public class GameController : ControllerBase
     [HttpGet("game/{urlName}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Game>> Get(string urlName)
+    public async Task<ActionResult<GameViewModel>> Get(string urlName)
     {
         // If found
         return (await _gameService.GetGameByUrlName(urlName) switch
         {
-            Game game => Ok(game),
+            Game game => Ok(new GameViewModel(game)),
             _ => NotFound()
         });
     }
