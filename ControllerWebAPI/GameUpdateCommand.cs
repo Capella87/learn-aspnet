@@ -1,14 +1,13 @@
-using ControllerWebAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 
-namespace ControllerWebAPI.Commands;
+namespace ControllerWebAPI.Models;
 
-public interface IUpdateCommand<T> where T : IEntity
+public interface IUpdate<T> where T : IEntity
 {
     public void Update(T target);
 }
 
-public class UpdateGameCommand : IUpdateCommand<Game>
+public class GameUpdateCommand : IUpdate<Game>
 {
     public string? Name { get; set; }
 
