@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using ControllerWebAPI.Models;
 using ControllerWebAPI.Services;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using ControllerWebAPI.Commands;
 using Microsoft.EntityFrameworkCore;
 
 namespace ControllerWebAPI.Controllers;
@@ -22,7 +21,7 @@ public class GameController : ControllerBase
 
     [HttpGet("/games")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IEnumerable<Game>> Index()
+    public async Task<IEnumerable<GameViewModel>> Index()
     {
         return await _gameService.GetAllGames();
     }
@@ -55,7 +54,7 @@ public class GameController : ControllerBase
         //    return Problem(detail: $"Game with id {newGame.Id} already exists.", statusCode: StatusCodes.Status400BadRequest);
         //}
 
-        if (!await _gameService.IsUrlNameExist(newEntity.UrlName))
+        if (await _gameService.IsUrlNameExist(newEntity.UrlName))
         {
             return Problem(detail: $"Game with id {newEntity.UrlName} already exists.", statusCode: StatusCodes.Status400BadRequest);
         }
@@ -91,9 +90,11 @@ public class GameController : ControllerBase
     }
 
     [HttpPut("/game/{urlName}")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> Update([FromRoute] string urlName, [FromBody] UpdateGameCommand cmd)
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> Update([FromRoute] string urlName, [FromBody] GameUpdateCommand cmd)
     {
         // Validation
         if (!await _gameService.IsUrlNameExist(urlName))
@@ -104,7 +105,9 @@ public class GameController : ControllerBase
         try
         {
             var result = await _gameService.UpdateGame(urlName, cmd);
-            return CreatedAtRoute(nameof(Get), new { urlName = result.UrlName }, result);
+
+            // Returns 200 OK
+            return Ok(result);
         }
         catch (DbUpdateConcurrencyException ex)
         {
