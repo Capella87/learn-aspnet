@@ -38,7 +38,7 @@ public class GameService
     public async Task<Game?> GetGameByUrlName(string urlName)
     {
         // TODO : threading issue
-        return await _context.Games.FindAsync(urlName);
+        return await _context.Games.FirstOrDefaultAsync(g => g.UrlName == urlName);
     }
 
     /// <summary>
@@ -67,8 +67,8 @@ public class GameService
         // Is it a good idea to throw an exception if the game is not found????
         // Answer : You should not use exceptions as regular flow of control.
         // https://stackoverflow.com/questions/76647772/when-should-i-throw-exception-vs-return-error-actionresult-in-asp-net-core-web
-        var game = await _context.Games.FindAsync(urlName);
         if (game == null) throw new Exception($"Game with Id {urlName} not found.");
+        var game = await _context.Games.FirstOrDefaultAsync(g => g.UrlName == urlName);
 
         var result = _context.Games.Remove(game)?.Entity;
         ArgumentNullException.ThrowIfNull(result, "Failed to delete the game.");
@@ -77,8 +77,8 @@ public class GameService
 
     public async Task<GameViewModel?> UpdateGame(string urlName, GameUpdateCommand cmd)
     {
-        var game = await _context.Games.FindAsync(urlName);
         if (game == null) throw new Exception($"Game with id {urlName} not found.");
+        var game = await _context.Games.FirstOrDefaultAsync(g => g.UrlName == urlName);
 
         cmd.Update(game);
         var result = _context.Update(game)?.Entity;
