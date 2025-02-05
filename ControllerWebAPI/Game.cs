@@ -1,6 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 namespace ControllerWebAPI.Models;
 
+[Index(nameof(UrlName), IsUnique = true)]
 public class Game : IEntity
 {
     [Key]
