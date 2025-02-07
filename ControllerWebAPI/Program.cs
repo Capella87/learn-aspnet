@@ -9,6 +9,8 @@ using System.Diagnostics;
 using Microsoft.Net.Http.Headers;
 using ControllerWebAPI.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -71,7 +73,10 @@ try
     builder.Services.AddControllers();
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddEndpointsApiExplorer();
-    builder.Services.AddOpenApi();
+    builder.Services.AddOpenApi(options =>
+    {
+        options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+    });
 
     var app = builder.Build();
     app.UseRouting();
@@ -93,7 +98,14 @@ try
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
-        app.MapOpenApi();
+        app.MapOpenApi("/openapi/v1api.json");
+        app.MapScalarApiReference("openapi/scalar", config =>
+        {
+            config.OpenApiRoutePattern = "/openapi/v1api.json";
+            config.Theme = ScalarTheme.BluePlanet;
+            config.HideModels = true;
+            config.HideDarkModeToggle = false;
+        });
         app.UseDeveloperExceptionPage();
     }
     else
