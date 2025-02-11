@@ -17,9 +17,9 @@ public class GameUpdateCommand : IUpdate<Game>
 
     public IEnumerable<string>? Genres { get; set; }
 
-    public string? Publisher { get; set; }
+    public IEnumerable<string>? Publishers { get; set; }
 
-    public string? Developer { get; set; }
+    public IEnumerable<string>? Developers { get; set; }
 
     public string? Description { get; set; }
 
@@ -28,9 +28,9 @@ public class GameUpdateCommand : IUpdate<Game>
         game.Name = Name ?? game.Name;
         game.UrlName = NewUrlName ?? game.UrlName;
         game.ReleaseDate = ReleaseDate ?? game.ReleaseDate;
-        game.Genres = Genres ?? game.Genres;
-        game.Publisher = Publisher ?? game.Publisher;
-        game.Developer = Developer ?? game.Developer;
+        //game.Genres = Genres ?? game.Genres;
+        //game.Publisher = Publisher ?? game.Publisher;
+        //game.Developer = Developer ?? game.Developer;
         game.Description = Description ?? game.Description;
     }
 }

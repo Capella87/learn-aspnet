@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace ControllerWebAPI.Models;
 
 public interface ICreate<T> where T : IEntity
@@ -15,9 +17,9 @@ public class GameCreateCommand : ICreate<Game>
 
     public IEnumerable<string>? Genres { get; set; }
 
-    public string? Publisher { get; set; }
+    public IEnumerable<string>? Publishers { get; set; }
 
-    public string? Developer { get; set; }
+    public IEnumerable<string>? Developers { get; set; }
 
     public string? Description { get; set; }
 
@@ -29,6 +31,8 @@ public class GameCreateCommand : ICreate<Game>
             UrlName = UrlName,
             Name = Name,
             ReleaseDate = ReleaseDate,
+
+            // Find genres first, then try to create that name
             Genres = Genres,
             Publisher = Publisher,
             Developer = Developer,
