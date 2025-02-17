@@ -1,20 +1,22 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ControllerWebAPI.Models;
 
 public class Genre
 {
     [Key]
-    public required int Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int Id { get; set; }
 
     public required string Name { get; set; }
 
-    public ICollection<Game> Games { get; } = [];
+    public ICollection<Game> Games { get; set; } = [];
     public ICollection<GameGenre> GameGenres { get; } = [];
 }
 
 public class GameGenre
 {
-    public int GameId { get; set; }
-    public Guid GenreId { get; set; }
+    public Guid GameId { get; set; }
+    public int GenreId { get; set; }
 }
