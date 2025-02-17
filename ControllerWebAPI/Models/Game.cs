@@ -7,9 +7,11 @@ namespace ControllerWebAPI.Models;
 public class Game : IEntity
 {
     [Key]
-    public required Guid Id { get; set; }
-[Required]
-    public required string UrlName { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Guid Id { get; set; }
+
+    [Required]
+    public string UrlName { get; set; }
 
     public required string Name { get; set; }
 
@@ -28,13 +30,11 @@ public class Game : IEntity
 
     public Game(string UrlName, string Name)
     {
-        this.Id = new Guid();
         this.UrlName = UrlName;
         this.Name = Name;
     }
 
     public Game()
     {
-        Id = new Guid();
     }
 }
