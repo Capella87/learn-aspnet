@@ -40,6 +40,18 @@ public class GameController : ControllerBase
         });
     }
 
+    [HttpHead("game/{urlName}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GameViewModel>> HeadGame(string urlName)
+    {
+        return (await _gameService.IsUrlNameExist(urlName) switch
+        {
+            true => Ok(),
+            _ => NotFound()
+        });
+    }
+
     [HttpPost("/game")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
