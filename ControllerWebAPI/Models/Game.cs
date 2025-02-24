@@ -13,7 +13,7 @@ public class Game : IEntity
     [Required]
     public string UrlName { get; set; }
 
-    public required string Name { get; set; }
+    public string Name { get; set; }
 
     public DateOnly? ReleaseDate { get; set; }
 

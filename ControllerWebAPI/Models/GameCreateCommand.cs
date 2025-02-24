@@ -1,5 +1,3 @@
-using System.Globalization;
-
 namespace ControllerWebAPI.Models;
 
 public interface ICreate<T> where T : IEntity
@@ -27,15 +25,10 @@ public class GameCreateCommand : ICreate<Game>
     {
         return new Game()
         {
-            Id = new Guid(),
             UrlName = UrlName,
             Name = Name,
             ReleaseDate = ReleaseDate,
-
             // Find genres first, then try to create that name
-            Genres = Genres,
-            Publisher = Publisher,
-            Developer = Developer,
             Description = Description
         };
     }
