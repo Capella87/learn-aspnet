@@ -12,15 +12,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ControllerWebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250213034728_Add genre and company")]
-    partial class Addgenreandcompany
+    [Migration("20250224080429_AddCompanyAndGenresWithUtf8")]
+    partial class AddCompanyAndGenresWithUtf8
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.1")
+                .UseCollation("Korean_100_CI_AS_KS_WS_SC_UTF8")
+                .HasAnnotation("ProductVersion", "9.0.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -29,11 +30,14 @@ namespace ControllerWebAPI.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(true)
+                        .HasColumnType("varchar(max)")
+                        .UseCollation("Korean_100_CI_AS_KS_WS_SC_UTF8");
 
                     b.HasKey("Id");
 
@@ -44,14 +48,19 @@ namespace ControllerWebAPI.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(true)
+                        .HasColumnType("varchar(max)")
+                        .UseCollation("Korean_100_CI_AS_KS_WS_SC_UTF8");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(true)
+                        .HasColumnType("varchar(max)")
+                        .UseCollation("Korean_100_CI_AS_KS_WS_SC_UTF8");
 
                     b.Property<DateOnly?>("ReleaseDate")
                         .HasColumnType("date");
@@ -78,7 +87,9 @@ namespace ControllerWebAPI.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .IsUnicode(true)
+                        .HasColumnType("varchar(max)")
+                        .UseCollation("Korean_100_CI_AS_KS_WS_SC_UTF8");
 
                     b.HasKey("Id");
 

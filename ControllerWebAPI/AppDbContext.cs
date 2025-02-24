@@ -1,5 +1,4 @@
 using ControllerWebAPI.Models;
-using ControllerWebAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace ControllerWebAPI.Data;
@@ -19,50 +18,19 @@ public class AppDbContext : DbContext
     public DbSet<GamePublisher> GamePublishers { get; set; }
     public DbSet<GameGenre> GameGenres { get; set; }
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+    }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Create a new company entity when user specified the name on JSON, but no existing one.
-        // Many-To-Many Relationship
-        modelBuilder.Entity<Game>()
-            .HasMany(g => g.Genres)
-            .WithMany(g => g.Games)
-            .UsingEntity<GameGenre>(
-                "GameGenre",
-                l => l.HasOne<Genre>()
-                    .WithMany(e => e.GameGenres)
-                    .HasForeignKey(e => e.GenreId)
-                    .HasPrincipalKey(e => e.Id),
-                r => r.HasOne<Game>()
-                    .WithMany(e => e.GameGenres)
-                    .HasForeignKey(e => e.GameId)
-                    .HasPrincipalKey(e => e.Id));
+        // You have to explicitly specify the collation of the database in SQL Server
+        modelBuilder.UseCollation("Korean_100_CI_AS_KS_WS_SC_UTF8");
 
-        modelBuilder.Entity<Game>()
-            .HasMany(g => g.Developers)
-            .WithMany(g => g.DevelopedGames)
-            .UsingEntity<GameDeveloper>(
-                "GameDeveloper",
-                l => l.HasOne<Company>()
-                    .WithMany(e => e.GameDevelopers)
-                    .HasForeignKey(e => e.DeveloperId)
-                    .HasPrincipalKey(e => e.Id),
-                r => r.HasOne<Game>()
-                    .WithMany(e => e.GameDevelopers)
-                    .HasForeignKey(e => e.GameId)
-                    .HasPrincipalKey(e => e.Id));
-
-        modelBuilder.Entity<Game>()
-            .HasMany(g => g.Publishers)
-            .WithMany(g => g.PublishedGames)
-            .UsingEntity<GamePublisher>(
-                "GamePublisher",
-                l => l.HasOne<Company>()
-                    .WithMany(e => e.GamePublishers)
-                    .HasForeignKey(e => e.PublisherId)
-                    .HasPrincipalKey(e => e.Id),
-                r => r.HasOne<Game>()
-                    .WithMany(e => e.GamePublishers)
-                    .HasForeignKey(e => e.GameId)
-                    .HasPrincipalKey(e => e.Id));
+        // Apply entity configurations
+        modelBuilder.ApplyConfiguration<Genre>(new GenreConfiguration())
+                    .ApplyConfiguration<Company>(new CompanyConfiguration())
+                    .ApplyConfiguration<Game>(new GameConfiguration());
     }
 }

@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
@@ -7,24 +6,48 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ControllerWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Addgenreandcompany : Migration
+    public partial class AddCompanyAndGenresWithUtf8 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // Drop a table if it already exist.
-            //migrationBuilder.DropTable(name: "GameDeveloper");
-            //migrationBuilder.DropTable(name: "GamePublisher");
-            //migrationBuilder.DropTable(name: "GameGenre");
-            //migrationBuilder.DropTable(name: "Companies");
-            //migrationBuilder.DropTable(name: "Genres");
+            migrationBuilder.AlterDatabase(
+                collation: "Korean_100_CI_AS_KS_WS_SC_UTF8");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Games",
+                type: "varchar(max)",
+                nullable: false,
+                collation: "Korean_100_CI_AS_KS_WS_SC_UTF8",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Description",
+                table: "Games",
+                type: "varchar(max)",
+                nullable: true,
+                collation: "Korean_100_CI_AS_KS_WS_SC_UTF8",
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "Id",
+                table: "Games",
+                type: "uniqueidentifier",
+                nullable: false,
+                defaultValueSql: "NEWID()",
+                oldClrType: typeof(Guid),
+                oldType: "uniqueidentifier");
 
             migrationBuilder.CreateTable(
                 name: "Companies",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "varchar(max)", nullable: false, collation: "Korean_100_CI_AS_KS_WS_SC_UTF8")
                 },
                 constraints: table =>
                 {
@@ -37,7 +60,7 @@ namespace ControllerWebAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "varchar(max)", nullable: false, collation: "Korean_100_CI_AS_KS_WS_SC_UTF8")
                 },
                 constraints: table =>
                 {
@@ -131,11 +154,12 @@ namespace ControllerWebAPI.Migrations
                 table: "GamePublisher",
                 column: "PublisherId");
 
+            // Convert string data to the new entities with raw SQL
             // Convert string array typed data to new entities.
             // Insert genres extracted from Games
             migrationBuilder.Sql(@"
                 INSERT INTO Genres (Name)
-                SELECT DISTINCT TRIM(value) AS 'Name'
+                SELECT DISTINCT CAST(TRIM(value) AS VARCHAR(MAX)) AS 'Name'
                 FROM Games
                 CROSS APPLY STRING_SPLIT(Games.Genres, ',');
             ");
@@ -146,19 +170,19 @@ namespace ControllerWebAPI.Migrations
                 INNER JOIN (SELECT Games.Id AS 'Gid', TRIM(value) AS 'GenreName'
                             FROM Games
                             CROSS APPLY STRING_SPLIT(Games.Genres, ',')) AS gg
-                ON Genres.Name = gg.GenreName;  
+                ON Genres.Name = gg.GenreName;
             ");
 
             // Convert developers and publishers
             migrationBuilder.Sql(@"
                 INSERT INTO Companies (Name)
-                SELECT DISTINCT TRIM(value) AS 'Name'
+                SELECT DISTINCT CAST(TRIM(value) AS VARCHAR(MAX)) AS 'Name'
                 FROM Games
                 CROSS APPLY STRING_SPLIT(Games.Developer, ',');
             ");
             migrationBuilder.Sql(@"
                 INSERT INTO Companies (Name)
-                SELECT DISTINCT TRIM(value)
+                SELECT DISTINCT CAST(TRIM(value) AS VARCHAR(MAX))
                 FROM Games
                 CROSS APPLY STRING_SPLIT(Games.Publisher, ',') AS p
                 WHERE TRIM(value) NOT IN (SELECT Name FROM Companies);
@@ -182,7 +206,6 @@ namespace ControllerWebAPI.Migrations
                 ON c.Name = gp.CompanyName;
             ");
 
-            // Finally, Execute the drop column command.
             migrationBuilder.DropColumn(
                 name: "Developer",
                 table: "Games");
@@ -217,9 +240,72 @@ namespace ControllerWebAPI.Migrations
                 type: "nvarchar(max)",
                 nullable: true);
 
-            // Move the name entity of Genres
-            migrationBuilder
+            migrationBuilder.Sql(@"
+            WITH GameDevelopersConcat AS (
+                SELECT g.Id AS GameId, CAST(STRING_AGG(c.Name, ',') AS NVARCHAR(MAX)) AS Developers
 
+                FROM GameDeveloper gd
+                INNER JOIN Companies c ON gd.DeveloperId = c.Id
+                INNER JOIN Games g ON gd.GameId = g.Id
+                GROUP BY g.Id
+            )
+            UPDATE g
+            SET g.Developer = gdc.Developers
+            FROM Games g
+            INNER JOIN GameDevelopersConcat gdc ON g.Id = gdc.GameId;
+
+            WITH GamePublishersConcat AS (
+                SELECT g.Id AS GameId, CAST(STRING_AGG(c.Name, ',') AS NVARCHAR(MAX)) AS Publishers
+
+                FROM GamePublisher gp
+                INNER JOIN Companies c ON gp.PublisherId = c.Id
+                INNER JOIN Games g ON gp.GameId = g.Id
+                GROUP BY g.Id
+            )
+            UPDATE g
+            SET g.Publisher = gpc.Publishers
+            FROM Games g
+            INNER JOIN GamePublishersConcat gpc ON g.Id = gpc.GameId;
+
+            WITH GenresConcat AS (
+                SELECT g.Id AS GameId, CAST(STRING_AGG(gg.Name, ',') AS NVARCHAR(MAX)) AS Genres
+
+                FROM GameGenre ggr
+                INNER JOIN Genres gg ON ggr.GenreId = gg.Id
+                INNER JOIN Games g ON ggr.GameId = g.Id
+                GROUP BY g.Id
+            )
+            UPDATE g
+            SET g.Genres = gc.Genres
+            FROM Games g
+            INNER JOIN GenresConcat gc ON g.Id = gc.GameId;
+            ");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Name",
+                table: "Games",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "varchar(max)");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "Description",
+                table: "Games",
+                type: "nvarchar(max)",
+                nullable: true,
+                oldClrType: typeof(string),
+                oldType: "varchar(max)",
+                oldNullable: true);
+
+            migrationBuilder.AlterColumn<Guid>(
+                name: "Id",
+                table: "Games",
+                type: "uniqueidentifier",
+                nullable: false,
+                oldClrType: typeof(Guid),
+                oldType: "uniqueidentifier",
+                oldDefaultValueSql: "NEWID()");
 
             migrationBuilder.DropTable(
                 name: "GameDeveloper");
