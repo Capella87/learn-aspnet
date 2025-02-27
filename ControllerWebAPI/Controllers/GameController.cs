@@ -13,17 +13,27 @@ namespace ControllerWebAPI.Controllers;
 public class GameController : ControllerBase
 {
     private readonly GameService _gameService;
+    private readonly ILogger _logger;
 
-    public GameController(GameService gameService)
+    // Dependency Injection for logging as well
+    public GameController(GameService gameService, ILogger<GameController> logger)
     {
         _gameService = gameService;
+        _logger = logger;
     }
 
     [HttpGet("/games")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IEnumerable<GameViewModel>> Index()
+    public async Task<IActionResult> Index()
     {
-        return await _gameService.GetAllGames();
+        var allGames = await _gameService.GetAllGames();
+        var rt = new
+        {
+            Count = allGames.Count,
+            Data = allGames
+        };
+
+        return Ok(rt);
     }
 
     // These are all actions
@@ -35,7 +45,7 @@ public class GameController : ControllerBase
         // If found
         return (await _gameService.GetGameByUrlName(urlName) switch
         {
-            Game game => Ok(new GameViewModel(game)),
+            GameViewModel g => Ok(g),
             _ => NotFound()
         });
     }
@@ -66,6 +76,8 @@ public class GameController : ControllerBase
         //    return Problem(detail: $"Game with id {newGame.Id} already exists.", statusCode: StatusCodes.Status400BadRequest);
         //}
 
+        // TODO : You should check by its name also...
+
         if (await _gameService.IsUrlNameExist(newEntity.UrlName))
         {
             return Problem(detail: $"Game with id '{newEntity.UrlName}' already exists.", statusCode: StatusCodes.Status400BadRequest);
@@ -94,6 +106,8 @@ public class GameController : ControllerBase
         }
         catch (Exception ex)
         {
+            // Log the exception
+            _logger.LogError(ex, ex.Message);
             // Return 500 Internal Server Error with ProblemDetails format
             return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
@@ -123,10 +137,12 @@ public class GameController : ControllerBase
         }
         catch (DbUpdateConcurrencyException ex)
         {
+            _logger.LogError(ex, ex.Message);
             return Problem(detail: ex.Message, statusCode: StatusCodes.Status409Conflict);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, ex.Message);
             return Problem(detail: ex.Message, statusCode: StatusCodes.Status500InternalServerError);
         }
     }
