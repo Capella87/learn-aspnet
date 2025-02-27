@@ -20,6 +20,10 @@ public class GameViewModel : IViewModel<Game>
 
     public string? Description { get; set; }
 
+    public GameViewModel()
+    {
+    }
+
     public GameViewModel(Game game)
     {
         UrlName = game.UrlName;
