@@ -10,6 +10,12 @@ using Serilog.Events;
 using IdentityFromScratch.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using IdentityFromScratch;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
@@ -78,6 +84,26 @@ try
                 IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
             };
         });
+
+    // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs
+    // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityBuilderExtensions.cs#L28
+    // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityBuilderUIExtensions.cs
+    builder.Services.AddIdentityCore<User<int>>(options =>
+    {
+        options.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = true;
+        options.Password.RequireLowercase = true;
+        options.Password.RequireUppercase = true;
+        options.Password.RequiredLength = 15;
+        options.Password.RequireNonAlphanumeric = false;
+
+    })
+        .AddEntityFrameworkStores<AppDbContext>()
+        .AddSignInManager()
+        .AddDefaultTokenProviders();
+
+    // Email Verification and password reset
+    builder.Services.TryAddTransient<IEmailSender, NoOpEmailSender>();
 
     // Note: This is Controller-based MVC Web API.
     // For Minimal APIs, you should set JSON options with `builder.Services.ConfigureHttpJsonOptions`
