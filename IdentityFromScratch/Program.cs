@@ -55,7 +55,6 @@ try
     }
 
     // Add services to the container.
-    builder.Services.AddScoped<IUserService, UserService>();
 
     // Configure DbContext with PostgreSQL
     builder.Services.AddDbContext<AppDbContext>(options =>
@@ -99,6 +98,7 @@ try
 
     })
         .AddEntityFrameworkStores<AppDbContext>()
+        .AddUserManager<UserManager<User<int>>>()
         .AddSignInManager()
         .AddDefaultTokenProviders();
 
