@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace IdentityFromScratch.Identity;
 
-public class LoginDto
+public class LoginRequestModel
 {
     // It can be encoded with Base64
     [JsonPropertyName("username")]

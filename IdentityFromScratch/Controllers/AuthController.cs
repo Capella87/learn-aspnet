@@ -23,7 +23,7 @@ public class AuthController : ControllerBase
     [Route("/login")]
     [ProducesResponseType(typeof(IdentityResult), StatusCodes.Status200OK)]
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody] LoginDto data)
+    public async Task<IActionResult> Login([FromBody] LoginRequestModel data)
     {
         _signInManager.AuthenticationScheme = JwtBearerDefaults.AuthenticationScheme;
 
@@ -36,8 +36,8 @@ public class AuthController : ControllerBase
             return Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);
         }
 
-        // All authentication and authorization works are done in SignInManager.
-        return Ok(result);
+        // All authentication and authorization works are done in SignInManager..., but we have to create a JWT token manually...
+        return Ok();
     }
 
     // Logout
