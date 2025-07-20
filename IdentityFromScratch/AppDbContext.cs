@@ -1,13 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using IdentityFromScratch.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace IdentityFromScratch;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<User<int>, IdentityRole<int>, int>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
-    public DbSet<User<int>> Users { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
