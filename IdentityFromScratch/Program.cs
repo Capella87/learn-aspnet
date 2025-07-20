@@ -84,6 +84,8 @@ try
             };
         });
 
+    builder.Services.TryAddScoped<IRoleValidator<IdentityRole<int>>, RoleValidator<IdentityRole<int>>>();
+
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityBuilderExtensions.cs#L28
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityBuilderUIExtensions.cs
@@ -98,8 +100,8 @@ try
 
     })
         .AddEntityFrameworkStores<AppDbContext>()
-        .AddUserManager<UserManager<User<int>>>()
         .AddSignInManager()
+        .AddRoleManager<IdentityRole<int>>()
         .AddDefaultTokenProviders();
 
     // Email Verification and password reset
