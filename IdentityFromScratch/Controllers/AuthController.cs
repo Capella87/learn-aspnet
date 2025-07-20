@@ -2,7 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using IdentityFromScratch.Identity;
 using Microsoft.AspNetCore.Identity;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using IdentityFromScratch.Identity.Token;
+using IdentityFromScratch.Identity.JwtToken;
 
 namespace IdentityFromScratch.Controllers;
 
@@ -12,11 +15,16 @@ public class AuthController : ControllerBase
 {
     private readonly SignInManager<IdentityUser> _signInManager;
     private readonly ILogger<AuthController> _logger;
+    private readonly AppDbContext _dbContext;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(SignInManager<IdentityUser> signInManager, ILogger<AuthController> logger)
+    public AuthController(SignInManager<IdentityUser> signInManager, ILogger<AuthController> logger,
+        AppDbContext dbContext, ITokenService tokenService)
     {
         _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _dbContext = dbContext; // ?? throw new ArgumentNullException(nameof(dbContext));
+        _tokenService = tokenService ?? throw new ArgumentNullException(nameof(tokenService));
     }
 
     // Login
@@ -30,7 +38,6 @@ public class AuthController : ControllerBase
         // Convert Base64 password to plain password.
 
         var result = await _signInManager.PasswordSignInAsync(data.Username, data.Password, false, false);
-
         if (!result.Succeeded)
         {
             return Problem(result.ToString(), statusCode: StatusCodes.Status401Unauthorized);

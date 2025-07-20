@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using IdentityFromScratch;
 using IdentityFromScratch.Identity.JwtToken;
 using System.Text;
+using IdentityFromScratch.Identity.Token;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
@@ -84,6 +85,7 @@ try
         });
 
     builder.Services.TryAddScoped<IRoleValidator<IdentityRole<int>>, RoleValidator<IdentityRole<int>>>();
+    builder.Services.TryAddScoped<ITokenService, JwtTokenService>();
 
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityBuilderExtensions.cs#L28
