@@ -28,6 +28,6 @@ public class JwtTokenResponse
             Expires = jwtToken.SecurityToken?.ValidTo,
             RefreshToken = refreshToken.Token,
             RefreshExpiresIn = refreshToken.ValidTo
-        }
+        };
     }
 }
