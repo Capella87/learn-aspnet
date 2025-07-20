@@ -21,9 +21,15 @@ public class JwtToken : IToken<JsonWebToken>
         _securityToken = new JsonWebToken(accessToken) ?? throw new ArgumentNullException(nameof(accessToken), "Access token cannot be null.");
     }
 
-    public JwtToken(JsonWebToken? jsonWebToken)
+    public JwtToken(JsonWebToken jsonWebToken)
     {
         _securityToken = jsonWebToken ?? throw new ArgumentNullException(nameof(jsonWebToken));
-        Token = jsonWebToken?.EncodedToken ?? throw new ArgumentNullException(nameof(jsonWebToken), "JsonWebToken cannot be null.");
+        Token = jsonWebToken.EncodedToken ?? throw new ArgumentNullException(nameof(jsonWebToken), "JsonWebToken cannot be null.");
+    }
+
+    public JwtToken(string accessToken, JsonWebToken jsonWebToken)
+    {
+        Token = accessToken ?? throw new ArgumentNullException(nameof(accessToken));
+        _securityToken = jsonWebToken ?? throw new ArgumentNullException(nameof(jsonWebToken));
     }
 }
