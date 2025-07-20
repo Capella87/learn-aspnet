@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
+using Scalar.AspNetCore;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.Serialization;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
 
 namespace IdentityFromScratch.Identity;
@@ -18,9 +18,11 @@ public class User<TKey> : IdentityUser<TKey>, IDisposable
         UserName = userName;
     }
 
-    [JsonPropertyName("email")]
+    [JsonPropertyName("secondary_email")]
     [EmailAddress]
-    public string? PrimaryEmail { get; set; }
+    public string? SecondaryEmail { get; set; }
+
+    public string? NormalizedSecondaryEmail { get; set; }
 
     [JsonPropertyName("first_name")]
     public string? FirstName { get; set; }
