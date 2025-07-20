@@ -1,21 +1,29 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 
 namespace IdentityFromScratch.Identity.Token;
 
-public class JwtToken : IToken
+public class JwtToken : IToken<JsonWebToken>
 {
-    [JsonPropertyName("access_token")]
-    [Required]
-    public string AccessToken { get; set; }
+    public string Token { get; set; }
 
-    [JsonPropertyName("refresh_token")]
-    [Required]
-    public string RefreshToken { get; set; }
+    private SecurityToken? _securityToken;
 
-    public JwtToken(string accessToken, string refreshToken)
+    public JsonWebToken? SecurityToken
     {
-        AccessToken = accessToken ?? throw new ArgumentNullException(nameof(accessToken));
-        RefreshToken = refreshToken ?? throw new ArgumentNullException(nameof(refreshToken));
+        get => (JsonWebToken?)_securityToken;
+        set => _securityToken = value;
+    }
+
+    public JwtToken(string accessToken)
+    {
+        Token = accessToken ?? throw new ArgumentNullException(nameof(accessToken));
+        _securityToken = new JsonWebToken(accessToken) ?? throw new ArgumentNullException(nameof(accessToken), "Access token cannot be null.");
+    }
+
+    public JwtToken(JsonWebToken? jsonWebToken)
+    {
+        _securityToken = jsonWebToken ?? throw new ArgumentNullException(nameof(jsonWebToken));
+        Token = jsonWebToken?.EncodedToken ?? throw new ArgumentNullException(nameof(jsonWebToken), "JsonWebToken cannot be null.");
     }
 }
