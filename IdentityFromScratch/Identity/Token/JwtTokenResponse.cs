@@ -20,14 +20,14 @@ public class JwtTokenResponse
     [JsonPropertyName("refresh_expires_in")]
     public DateTimeOffset? RefreshExpiresIn { get; set; }
 
-    public static JwtTokenResponse CreateTokenResponse(JwtToken jwtToken, RefreshToken refreshToken)
+    public static JwtTokenResponse CreateTokenResponse(JwtToken jwtToken, RefreshToken? refreshToken)
     {
         return new JwtTokenResponse
         {
             AccessToken = jwtToken.Token,
             Expires = jwtToken.SecurityToken?.ValidTo,
-            RefreshToken = refreshToken.Token,
-            RefreshExpiresIn = refreshToken.ValidTo
+            RefreshToken = refreshToken?.Token,
+            RefreshExpiresIn = refreshToken?.ValidTo
         };
     }
 }
