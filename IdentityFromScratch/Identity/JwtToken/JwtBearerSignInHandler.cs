@@ -15,11 +15,14 @@ namespace IdentityFromScratch.Identity.JwtToken;
 
 public class JwtBearerSignInHandler : JwtBearerHandler, IAuthenticationSignInHandler
 {
-    public JwtBearerSignInHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder) : base(options, logger, encoder)
-    {
-    }
-
     private ITokenService _tokenService => Context.RequestServices.GetRequiredService<ITokenService>();
+
+    private readonly IOptionsMonitor<JsonSerializerOptions> _serializerOptions;
+
+    public JwtBearerSignInHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, IOptionsMonitor<JsonSerializerOptions> serializerOptions) : base(options, logger, encoder)
+    {
+        _serializerOptions = serializerOptions;
+    }
 
     public virtual Task SignInAsync(ClaimsPrincipal user, AuthenticationProperties? properties)
     {
