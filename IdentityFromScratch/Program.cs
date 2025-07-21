@@ -16,6 +16,8 @@ using IdentityFromScratch;
 using IdentityFromScratch.Identity.JwtToken;
 using System.Text;
 using IdentityFromScratch.Identity.Token;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(AppContext.BaseDirectory)
@@ -116,9 +118,20 @@ try
             options.JsonSerializerOptions.AllowTrailingCommas = false;
             options.AllowInputFormatterExceptionMessages = true;
             options.JsonSerializerOptions.AllowOutOfOrderMetadataProperties = false;
-            options.JsonSerializerOptions.ReadCommentHandling = System.Text.Json.JsonCommentHandling.Skip;
+            options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
             options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
         });
+
+    // Exclude null values from JSON serialization in some services or controllers.
+    // Named Options
+    builder.Services.Configure<JsonSerializerOptions>("NoNullSerialization", options =>
+    {
+        options.AllowTrailingCommas = false;
+        options.AllowOutOfOrderMetadataProperties = false;
+        options.ReadCommentHandling = JsonCommentHandling.Skip;
+        options.PropertyNameCaseInsensitive = true;
+        options.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    });
 
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddEndpointsApiExplorer();
