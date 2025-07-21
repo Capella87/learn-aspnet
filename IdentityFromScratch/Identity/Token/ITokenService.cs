@@ -5,6 +5,8 @@ namespace IdentityFromScratch.Identity.Token;
 
 public interface ITokenService
 {
+    protected ILogger<ITokenService> Logger { get; }
+
     public IToken<JsonWebToken> GenerateAccessToken(IEnumerable<Claim> claims);
 
     public IToken GenerateRefreshToken();
