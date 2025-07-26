@@ -11,6 +11,8 @@ using ControllerWebAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Rewrite;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -41,14 +43,6 @@ try
         o.LowercaseQueryStrings = true;
     });
 
-    // JSON configuration
-    builder.Services.ConfigureHttpJsonOptions(o =>
-    {
-        o.SerializerOptions.AllowTrailingCommas = false;
-        o.SerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
-        o.SerializerOptions.PropertyNameCaseInsensitive = true;
-    });
-
     // Enable Scope Validation always (By default, it is only enabled in development)
     builder.Host.UseDefaultServiceProvider(o =>
     {
@@ -58,6 +52,7 @@ try
 
     builder.Services.AddProblemDetails();
     builder.Services.AddAntiforgery();
+    builder.Services.AddCors();
     if (builder.Environment.IsDevelopment())
     {
         builder.Services.AddHealthChecks();
@@ -70,15 +65,26 @@ try
         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
     // AddControllers and MapControllers for MVC Web API.
-    builder.Services.AddControllers();
+    builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.AllowTrailingCommas = false;
+            options.AllowInputFormatterExceptionMessages = true;
+            options.JsonSerializerOptions.AllowOutOfOrderMetadataProperties = false;
+            options.JsonSerializerOptions.ReadCommentHandling = JsonCommentHandling.Skip;
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+        });
+
     // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddOpenApi(options =>
     {
-        options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
+        options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
     });
 
     var app = builder.Build();
+
     app.UseRouting();
     app.UseSerilogRequestLogging((opts) =>
     {
@@ -95,6 +101,9 @@ try
         ];
     });
 
+    app.UseRewriter(new RewriteOptions()
+        .AddRedirectToNonWwwPermanent());
+
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
     {
@@ -107,10 +116,11 @@ try
             config.HideDarkModeToggle = false;
         });
         app.UseDeveloperExceptionPage();
+        app.MapHealthChecks("/healthchecks");
     }
     else
     {
-        app.UseExceptionHandler("/Error");
+        app.UseExceptionHandler("/error");
         app.UseHsts();
     }
 
@@ -121,6 +131,7 @@ try
     app.UseAuthorization();
     app.MapControllers();
 
+    // Bind Minimal API endpoints here
     app.MapGet("/", () => "Hello World!");
 
     app.Run();
