@@ -26,4 +26,4 @@ This repository uses .NET 8. In every .NET release, I switch .NET version to lat
 This repository is distributed under MIT License. See LICENSE file for details.
 
 ---
-© 2023-2024 Capella87
+© 2023-2025 Capella87
