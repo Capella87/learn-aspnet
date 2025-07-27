@@ -26,13 +26,29 @@ public class JwtBearerSignInHandler : JwtBearerHandler, IAuthenticationSignInHan
 
     public virtual Task SignInAsync(ClaimsPrincipal user, AuthenticationProperties? properties)
     {
+        // ForwardSignIn is used to forward the sign-in request to another authentication handler.
         var target = ResolveTarget(Options.ForwardSignIn);
+
+        // If a target is not specified, we handle the sign-in ourselves with JWT.
         return (target != null)
             ? Context.SignInAsync(target, user, properties)
             : HandleSignInAsync(user, properties);
     }
 
-    public virtual Task SignOutAsync(AuthenticationProperties? properties) => Task.CompletedTask;
+    public virtual Task SignOutAsync(AuthenticationProperties? properties)
+    {
+        var target = ResolveTarget(Options.ForwardSignOut);
+
+        return (target != null)
+            ? Context.SignOutAsync(target, properties)
+            : HandleSignOutAsync(properties ?? new AuthenticationProperties());
+    }
+
+    protected override Task HandleChallengeAsync(AuthenticationProperties properties)
+    {
+        Response.Headers.Append(HeaderNames.WWWAuthenticate, "Bearer");
+        return base.HandleChallengeAsync(properties);
+    }
 
     protected virtual async Task HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties? properties)
     {
