@@ -10,10 +10,12 @@ public class RefreshToken : IToken
 
     public DateTimeOffset? ValidTo { get; set; }
 
+    public DateTimeOffset? ValidFrom { get; set; } = DateTimeOffset.UtcNow;
+
 
     // TODO: Apply Options pattern for configuration
 
-    public RefreshToken(string token, DateTimeOffset? validTo = null)
+    public RefreshToken(string token, DateTimeOffset? validTo = null, DateTimeOffset? validFrom = null)
     {
         Token = token;
         ArgumentException.ThrowIfNullOrEmpty(token, nameof(token));
