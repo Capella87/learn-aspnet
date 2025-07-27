@@ -80,7 +80,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddOpenApi(options =>
     {
-        options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+        options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_0;
     });
 
     var app = builder.Build();
