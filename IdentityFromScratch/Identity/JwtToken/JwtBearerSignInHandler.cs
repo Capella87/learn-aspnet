@@ -1,11 +1,15 @@
+using IdentityFromScratch.Identity.Token;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
+using Npgsql.Internal;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
-
-using IdentityFromScratch.Identity.Token;
-using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 
 namespace IdentityFromScratch.Identity.JwtToken;
 
@@ -55,21 +59,30 @@ public class JwtBearerSignInHandler : JwtBearerHandler, IAuthenticationSignInHan
         var utcNow = DateTime.UtcNow;
 
         // We have to create a new token manually.
-        var accessToken = _tokenService.GenerateAccessToken(user.Claims);
-        var refreshToken = _tokenService.GenerateRefreshToken();
-
-        // Getting the access token from the context.
-        var token = await Context.GetTokenAsync("access_token") ?? throw new InvalidOperationException("Access token is not available in the context.");
-        var isTimeRetrieved = long.TryParse(Context.User.FindFirst("exp")?.Value, out var expiresAt);
-
-        if (!isTimeRetrieved)
+        try
         {
-            throw new InvalidOperationException("Expiration time could not be retrieved.");
-        }
+            var token = _tokenService.GenerateAccessToken(user.Claims);
+            var refreshToken = _tokenService.GenerateRefreshToken();
 
-        await Task.CompletedTask;
-        // await Context.Response.WriteAsJsonAsync(new Token.JwtToken(token, expiresAt));
+            var tokenResponse = JwtTokenResponse.CreateTokenResponse(token as Token.JwtToken ?? throw new ArgumentNullException(nameof(token)),
+    refreshToken as RefreshToken);
+            await Context.Response.WriteAsJsonAsync(tokenResponse, _serializerOptions.Get("NoNullSerialization"));
+        }
+        catch (ArgumentNullException ex)
+        {
+            Logger.LogError(ex, "An error occurred while generating the JWT token.");
+            Context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            // Write an error response with ProblemDetails or a custom error message.
+
+            var tokenProblemDetails = new ProblemDetails
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "Sign-In Error",
+                Detail = "An error occurred while generating the JWT token.",
+            };
+            await Context.Response.WriteAsJsonAsync(tokenProblemDetails, _serializerOptions.Get("NoNullSerialization"));
+        }
     }
 
-    protected virtual Task HandleSignOutAsync(ClaimsPrincipal user, AuthenticationProperties? properties) => Task.CompletedTask;
+    protected virtual Task HandleSignOutAsync(AuthenticationProperties? properties) => Task.CompletedTask;
 }
