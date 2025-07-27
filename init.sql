@@ -1,7 +1,7 @@
 -- PostgreSQL script to initialize the database schema for ASP.NET Core Application
 
 CREATE DATABASE dbdb WITH
-    LC_LOCALE= 'und-x-icu'
+    LC_CTYPE= 'und-x-icu'
     LC_COLLATE = 'und-x-icu'
     TEMPLATE = template0;
 
