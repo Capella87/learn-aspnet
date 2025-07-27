@@ -74,15 +74,18 @@ try
         {
             options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                ValidateIssuer = builder.Configuration.GetValue<bool?>("JwtSettings:AccessToken:ValidateIssuer") ?? true,
+                ValidateAudience = builder.Configuration.GetValue<bool?>("JwtSettings:AccessToken:ValidateAudience") ?? true,
                 ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration["JWT:Issuer"],
-                ValidAudience = builder.Configuration["JWT:Audience"],
+                ValidateIssuerSigningKey = builder.Configuration.GetValue<bool?>("JwtSettings:AccessToken:ValidateIssuerSigningKey") ?? true,
+                ValidIssuers = builder.Configuration.GetSection("JwtSettings:AccessToken:Issuers").Get<string[]?>()
+                    ?? throw new SecurityTokenInvalidIssuerException("Valid issuers are not found"),
+                ValidAudiences = builder.Configuration.GetSection("JwtSettings:AccessToken:Audiences").Get<string[]?>()
+                    ?? throw new SecurityTokenInvalidAudienceException("Valid audiences are not found"),
 
                 // Note: You should hide the secret key in a secure location, such as Azure Key Vault or AWS Secrets Manager in Production level.
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SecretKey"])),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessToken:SecretKey"]
+                ?? throw new SecurityTokenSignatureKeyNotFoundException("Signing key is not found")))
             };
         });
 
@@ -92,7 +95,8 @@ try
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityBuilderExtensions.cs#L28
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityBuilderUIExtensions.cs
-    builder.Services.AddIdentityCore<User<int>>(options =>
+
+    builder.Services.AddIdentity<User<int>, IdentityRole<int>>(options =>
     {
         options.User.RequireUniqueEmail = true;
         options.Password.RequireDigit = true;
@@ -100,11 +104,8 @@ try
         options.Password.RequireUppercase = true;
         options.Password.RequiredLength = 15;
         options.Password.RequireNonAlphanumeric = false;
-
     })
         .AddEntityFrameworkStores<AppDbContext>()
-        .AddSignInManager()
-        .AddRoleManager<IdentityRole<int>>()
         .AddDefaultTokenProviders();
 
     // Email Verification and password reset
