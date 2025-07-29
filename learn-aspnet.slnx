@@ -1,0 +1,32 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="LICENSE.txt" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="E:/Dev/laspnet/BlazorPractice/BlazorPractice.csproj" />
+  <Project Path="E:/Dev/laspnet/ConfigPractice/ConfigPractice.csproj" />
+  <Project Path="E:/Dev/laspnet/ControllerWebAPI/ControllerWebAPI.csproj" />
+  <Project Path="E:/Dev/laspnet/DIServicePractice/DIServicePractice.csproj" />
+  <Project Path="E:/Dev/laspnet/EFCorePractice/EFCorePractice.csproj" />
+  <Project Path="E:/Dev/laspnet/FutureValue/FutureValue.csproj">
+    <Platform Solution="*|x64" Project="x64" />
+  </Project>
+  <Project Path="E:/Dev/laspnet/IdentityFromScratch/IdentityFromScratch.csproj" />
+  <Project Path="E:/Dev/laspnet/IdentityRazorPages/IdentityRazorPages.csproj" />
+  <Project Path="E:/Dev/laspnet/JWTToken/JWTToken.csproj" />
+  <Project Path="E:/Dev/laspnet/MinimalAPIRouting/MinimalAPIRouting.csproj" />
+  <Project Path="E:/Dev/laspnet/MinimalModelValidation/MinimalModelValidation.csproj" />
+  <Project Path="E:/Dev/laspnet/MinimalWebAPI/MinimalWebAPI.csproj" />
+  <Project Path="E:/Dev/laspnet/OpenAPIPractice/OpenAPIPractice.csproj" />
+  <Project Path="E:/Dev/laspnet/OpenAPIPracticeClient/OpenAPIPracticeClient.csproj" />
+  <Project Path="E:/Dev/laspnet/RazorPageHandlerPractice/RazorPageHandlerPractice.csproj" />
+  <Project Path="E:/Dev/laspnet/RazorPractice/RazorPractice.csproj" />
+  <Project Path="E:/Dev/laspnet/ReverseProxy/ReverseProxy.csproj" />
+</Solution>
