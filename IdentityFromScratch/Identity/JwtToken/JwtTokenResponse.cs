@@ -1,3 +1,4 @@
+using IdentityFromScratch.Identity.Token;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
