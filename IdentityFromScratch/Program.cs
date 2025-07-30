@@ -173,11 +173,11 @@ try
             config.HideDarkModeToggle = false;
         });
         app.UseDeveloperExceptionPage();
-        app.MapHealthChecks("/healthcheck");
+        app.MapHealthChecks("/healthchecks");
     }
     else
     {
-        app.UseExceptionHandler("/Error");
+        app.UseExceptionHandler("/error");
         app.UseHsts();
     }
 
