@@ -64,7 +64,7 @@ public class JwtBearerSignInHandler : JwtBearerHandler, IAuthenticationSignInHan
             var token = _tokenService.GenerateAccessToken(user.Claims);
             var refreshToken = _tokenService.GenerateRefreshToken();
 
-            var tokenResponse = JwtTokenResponse.CreateTokenResponse(token as Token.JwtToken ?? throw new ArgumentNullException(nameof(token)),
+            var tokenResponse = JwtTokenResponse.CreateTokenResponse(token as JwtToken ?? throw new ArgumentNullException(nameof(token)),
     refreshToken as RefreshToken);
             await Context.Response.WriteAsJsonAsync(tokenResponse, _serializerOptions.Get("NoNullSerialization"));
         }

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
-namespace IdentityFromScratch.Identity.Token;
+namespace IdentityFromScratch.Identity.JwtToken;
 
 public class JwtTokenResponse
 {

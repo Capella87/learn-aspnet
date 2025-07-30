@@ -1,7 +1,8 @@
+using IdentityFromScratch.Identity.Token;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 
-namespace IdentityFromScratch.Identity.Token;
+namespace IdentityFromScratch.Identity.JwtToken;
 
 public class JwtToken : IToken<JsonWebToken>
 {
