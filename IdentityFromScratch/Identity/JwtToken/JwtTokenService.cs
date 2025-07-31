@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,7 +64,12 @@ public class JwtTokenService : ITokenService
 
     IToken ITokenService.GenerateRefreshToken()
     {
-        throw new NotImplementedException("Refresh token generation is not implemented yet.");
+        var currentTime = DateTime.UtcNow;
+        var rt = new byte[32];
+        var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(rt);
+
+        return new RefreshToken(Convert.ToBase64String(rt), currentTime.AddDays(10), currentTime);
     }
 
     public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
