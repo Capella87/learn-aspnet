@@ -20,7 +20,8 @@
         "GitHub.copilot",
         "GitHub.copilot-chat",
         "ms-dotnettools.vscodeintellicode-csharp",
-        "josefpihrt-vscode.roslynator"
+        "josefpihrt-vscode.roslynator",
+        "ms-vscode-remote.remote-containers"
       ]
     }
   },
