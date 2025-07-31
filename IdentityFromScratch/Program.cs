@@ -74,6 +74,7 @@ try
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityBuilderUIExtensions.cs
 
     // Customize Identity configuration for JWT service
+    builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
     builder.Services.AddTokenIdentity<User<int>, IdentityRole<int>>(options =>
     {
         options.User.RequireUniqueEmail = true;
