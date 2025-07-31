@@ -32,6 +32,8 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Configuration" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.7" />
+    <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="8.13.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.13.0" />
     <PackageReference Include="Microsoft.OpenApi" Version="[1.6.24,2.0.0)" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     <PackageReference Include="Scalar.AspNetCore" Version="2.6.4" />
