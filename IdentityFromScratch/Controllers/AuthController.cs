@@ -44,7 +44,8 @@ public class AuthController : ControllerBase
         }
 
         // All authentication and authorization works are done in SignInManager..., but we have to create a JWT token manually...
-        return Ok();
+        // In the referred code, they returns TypedResults.Empty.
+        return new EmptyResult();
     }
 
     // Logout
