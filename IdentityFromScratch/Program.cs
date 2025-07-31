@@ -69,36 +69,12 @@ try
     });
 
     // Identity configurations
-    builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
-    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddJwtBearerSignIn(JwtBearerDefaults.AuthenticationScheme, options =>
-        {
-            var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
-            options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
-            {
-                ValidateIssuer = jwtSettings.AccessToken.ValidateIssuer ?? true,
-                ValidateAudience = jwtSettings.AccessToken.ValidateAudience ?? true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = jwtSettings.AccessToken.ValidateIssuerSigningKey ?? true,
-                ValidIssuers = jwtSettings.AccessToken.Issuers
-                    ?? throw new SecurityTokenInvalidIssuerException("Valid issuers are not found"),
-                ValidAudiences = jwtSettings.AccessToken.Audiences
-                    ?? throw new SecurityTokenInvalidAudienceException("Valid audiences are not found"),
-
-                // Note: You should hide the secret key in a secure location, such as Azure Key Vault or AWS Secrets Manager in Production level.
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.AccessToken.SecretKey
-                ?? throw new SecurityTokenSignatureKeyNotFoundException("Signing key is not found")))
-            };
-        });
-
-    builder.Services.TryAddScoped<IRoleValidator<IdentityRole<int>>, RoleValidator<IdentityRole<int>>>();
-    builder.Services.TryAddScoped<ITokenService, JwtTokenService>();
-
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityServiceCollectionUIExtensions.cs
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/Core/src/IdentityBuilderExtensions.cs#L28
     // Source: https://github.com/dotnet/aspnetcore/blob/main/src/Identity/UI/src/IdentityBuilderUIExtensions.cs
 
-    builder.Services.AddIdentity<User<int>, IdentityRole<int>>(options =>
+    // Customize Identity configuration for JWT service
+    builder.Services.AddTokenIdentity<User<int>, IdentityRole<int>>(options =>
     {
         options.User.RequireUniqueEmail = true;
         options.Password.RequireDigit = true;
@@ -107,11 +83,8 @@ try
         options.Password.RequiredLength = 15;
         options.Password.RequireNonAlphanumeric = false;
     })
-        .AddEntityFrameworkStores<AppDbContext>()
-        .AddDefaultTokenProviders();
-
-    // Email Verification and password reset
-    builder.Services.TryAddTransient<IEmailSender, NoOpEmailSender>();
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
     // Note: This is Controller-based MVC Web API.
     // For Minimal APIs, you should set JSON options with `builder.Services.ConfigureHttpJsonOptions`
