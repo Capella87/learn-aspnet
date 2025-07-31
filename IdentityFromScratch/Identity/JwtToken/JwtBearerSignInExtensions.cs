@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace IdentityFromScratch.Identity.JwtToken;
 
@@ -31,6 +32,7 @@ public static class JwtBearerSignInExtensions
         ArgumentNullException.ThrowIfNull(configureOptions);
 
         builder.Services.TryAddScoped<ITokenService, JwtTokenService>();
+        builder.Services.AddSingleton<JsonWebTokenHandler>();
 
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<JwtBearerOptions>, JwtBearerSignInConfigureOptions>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, JwtBearerPostConfigureOptions>());

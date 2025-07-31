@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace IdentityFromScratch.Identity.JwtToken;
@@ -12,8 +13,8 @@ namespace IdentityFromScratch.Identity.JwtToken;
 public class JwtTokenService : ITokenService
 {
     private readonly IConfiguration _config;
-    private readonly JwtBearerOptions _jwtBearerOptions;
     private readonly ILogger<JwtTokenService> _logger;
+    private readonly JwtSettings _settings;
 
     // TODO: Options patterns for refresh token (access token is already handled by other settings...?)
 
@@ -22,34 +23,35 @@ public class JwtTokenService : ITokenService
 
     ILogger<ITokenService> ITokenService.Logger => _logger;
 
-    public JwtTokenService(IConfiguration config, ILogger<JwtTokenService> logger, IOptions<JwtBearerOptions> options)
+    public JwtTokenService(IConfiguration config, ILogger<JwtTokenService> logger, JsonWebTokenHandler? handler, IOptions<JwtSettings> settings)
     {
         _config = config;
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-        _jwtBearerOptions = options.Value;
-        _jwtHandler = _jwtBearerOptions.TokenHandlers.FirstOrDefault() as JsonWebTokenHandler ?? new JsonWebTokenHandler()
+        _jwtHandler = handler ?? new JsonWebTokenHandler()
         {
             MapInboundClaims = JwtSecurityTokenHandler.DefaultMapInboundClaims,
         };
+        _settings = settings.Value;
     }
 
     public IToken<JsonWebToken> GenerateAccessToken(IEnumerable<Claim> claims)
     {
         var isseudAt = DateTime.UtcNow;
+
         var descriptor = new SecurityTokenDescriptor
         {
-            Expires = isseudAt.AddMinutes(_config.GetValue<int?>("JwtSettings:AccessToken:ExpiresInMinutes") ?? 15),
+            Expires = isseudAt.AddMinutes(_settings.AccessToken.ExpiresInMinutes ?? 15),
             IssuedAt = isseudAt,
-            Issuer = _jwtBearerOptions.TokenValidationParameters.ValidIssuer,
+            Issuer = _settings.AccessToken.Issuers!.First(),
             Subject = new ClaimsIdentity(claims),
 
             // Source: https://stackoverflow.com/questions/71449622/add-multiple-audiences-in-token-descriptor
             Claims = new Dictionary<string, object>
             {
-                { Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Aud, _jwtBearerOptions.TokenValidationParameters.ValidAudiences }
+                { Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames.Aud, _settings.AccessToken.Audiences! }
             },
             SigningCredentials = new SigningCredentials(
-                _jwtBearerOptions.TokenValidationParameters.IssuerSigningKey,
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.AccessToken.SecretKey)),
                 SecurityAlgorithms.HmacSha256)
         };
 

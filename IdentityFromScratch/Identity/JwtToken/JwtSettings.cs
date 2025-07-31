@@ -27,7 +27,7 @@ public class  AccessTokenSettings
 
     public string SecretKey { get; set; }
 
-    public long ExpiresInMinutes { get; set; }
+    public long? ExpiresInMinutes { get; set; }
 
     public string? SigningAlgorithm { get; set; } = "HS256";
 }

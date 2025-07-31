@@ -69,22 +69,24 @@ try
     });
 
     // Identity configurations
+    builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearerSignIn(JwtBearerDefaults.AuthenticationScheme, options =>
         {
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtSettings>();
             options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
             {
-                ValidateIssuer = builder.Configuration.GetValue<bool?>("JwtSettings:AccessToken:ValidateIssuer") ?? true,
-                ValidateAudience = builder.Configuration.GetValue<bool?>("JwtSettings:AccessToken:ValidateAudience") ?? true,
+                ValidateIssuer = jwtSettings.AccessToken.ValidateIssuer ?? true,
+                ValidateAudience = jwtSettings.AccessToken.ValidateAudience ?? true,
                 ValidateLifetime = true,
-                ValidateIssuerSigningKey = builder.Configuration.GetValue<bool?>("JwtSettings:AccessToken:ValidateIssuerSigningKey") ?? true,
-                ValidIssuers = builder.Configuration.GetSection("JwtSettings:AccessToken:Issuers").Get<string[]?>()
+                ValidateIssuerSigningKey = jwtSettings.AccessToken.ValidateIssuerSigningKey ?? true,
+                ValidIssuers = jwtSettings.AccessToken.Issuers
                     ?? throw new SecurityTokenInvalidIssuerException("Valid issuers are not found"),
-                ValidAudiences = builder.Configuration.GetSection("JwtSettings:AccessToken:Audiences").Get<string[]?>()
+                ValidAudiences = jwtSettings.AccessToken.Audiences
                     ?? throw new SecurityTokenInvalidAudienceException("Valid audiences are not found"),
 
                 // Note: You should hide the secret key in a secure location, such as Azure Key Vault or AWS Secrets Manager in Production level.
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:AccessToken:SecretKey"]
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.AccessToken.SecretKey
                 ?? throw new SecurityTokenSignatureKeyNotFoundException("Signing key is not found")))
             };
         });
