@@ -13,12 +13,12 @@ namespace IdentityFromScratch.Controllers;
 [Route("/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly SignInManager<User<int>> _signInManager;
     private readonly ILogger<AuthController> _logger;
     private readonly AppDbContext _dbContext;
     private readonly ITokenService _tokenService;
 
-    public AuthController(SignInManager<IdentityUser> signInManager, ILogger<AuthController> logger,
+    public AuthController(SignInManager<User<int>> signInManager, ILogger<AuthController> logger,
         AppDbContext dbContext, ITokenService tokenService)
     {
         _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
