@@ -10,23 +10,23 @@
     <File Path="LICENSE.txt" />
     <File Path="README.md" />
   </Folder>
-  <Project Path="E:/Dev/laspnet/BlazorPractice/BlazorPractice.csproj" />
-  <Project Path="E:/Dev/laspnet/ConfigPractice/ConfigPractice.csproj" />
-  <Project Path="E:/Dev/laspnet/ControllerWebAPI/ControllerWebAPI.csproj" />
-  <Project Path="E:/Dev/laspnet/DIServicePractice/DIServicePractice.csproj" />
-  <Project Path="E:/Dev/laspnet/EFCorePractice/EFCorePractice.csproj" />
-  <Project Path="E:/Dev/laspnet/FutureValue/FutureValue.csproj">
+  <Project Path="BlazorPractice/BlazorPractice.csproj" />
+  <Project Path="ConfigPractice/ConfigPractice.csproj" />
+  <Project Path="ControllerWebAPI/ControllerWebAPI.csproj" />
+  <Project Path="DIServicePractice/DIServicePractice.csproj" />
+  <Project Path="EFCorePractice/EFCorePractice.csproj" />
+  <Project Path="FutureValue/FutureValue.csproj">
     <Platform Solution="*|x64" Project="x64" />
   </Project>
-  <Project Path="E:/Dev/laspnet/IdentityFromScratch/IdentityFromScratch.csproj" />
-  <Project Path="E:/Dev/laspnet/IdentityRazorPages/IdentityRazorPages.csproj" />
-  <Project Path="E:/Dev/laspnet/JWTToken/JWTToken.csproj" />
-  <Project Path="E:/Dev/laspnet/MinimalAPIRouting/MinimalAPIRouting.csproj" />
-  <Project Path="E:/Dev/laspnet/MinimalModelValidation/MinimalModelValidation.csproj" />
-  <Project Path="E:/Dev/laspnet/MinimalWebAPI/MinimalWebAPI.csproj" />
-  <Project Path="E:/Dev/laspnet/OpenAPIPractice/OpenAPIPractice.csproj" />
-  <Project Path="E:/Dev/laspnet/OpenAPIPracticeClient/OpenAPIPracticeClient.csproj" />
-  <Project Path="E:/Dev/laspnet/RazorPageHandlerPractice/RazorPageHandlerPractice.csproj" />
-  <Project Path="E:/Dev/laspnet/RazorPractice/RazorPractice.csproj" />
-  <Project Path="E:/Dev/laspnet/ReverseProxy/ReverseProxy.csproj" />
+  <Project Path="IdentityFromScratch/IdentityFromScratch.csproj" />
+  <Project Path="IdentityRazorPages/IdentityRazorPages.csproj" />
+  <Project Path="JWTToken/JWTToken.csproj" />
+  <Project Path="MinimalAPIRouting/MinimalAPIRouting.csproj" />
+  <Project Path="MinimalModelValidation/MinimalModelValidation.csproj" />
+  <Project Path="MinimalWebAPI/MinimalWebAPI.csproj" />
+  <Project Path="OpenAPIPractice/OpenAPIPractice.csproj" />
+  <Project Path="OpenAPIPracticeClient/OpenAPIPracticeClient.csproj" />
+  <Project Path="RazorPageHandlerPractice/RazorPageHandlerPractice.csproj" />
+  <Project Path="RazorPractice/RazorPractice.csproj" />
+  <Project Path="ReverseProxy/ReverseProxy.csproj" />
 </Solution>
