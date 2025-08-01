@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  identityapp:
+    build:
+      context: .
+      target: production
+    container_name: IdentityFromScratch_Prod
+    ports:
+      - "5929:5929"
+      - "5950:5950"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
+      - ConnectionStringProfile=${CONNECTION_STRING_PROFILE}
+      - JwtSettings__AccessToken__SecretKey=${JWT_SECRET_KEY}
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:17
+    container_name: identityfromscratch_postgres_prod
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5435:5435"
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+volumes:
+  pgdata_prod:
