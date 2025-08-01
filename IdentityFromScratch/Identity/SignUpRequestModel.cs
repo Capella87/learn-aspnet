@@ -14,9 +14,10 @@ public class SignUpRequestModel
     [JsonPropertyName("password")]
     public string Password { get; set; }
 
+    [Required(ErrorMessage = "EmailAddress is required.")]
     [EmailAddress(ErrorMessage = "Invalid email address.")]
     [JsonPropertyName("email")]
-    public string? EmailAddress { get; set; }
+    public string EmailAddress { get; set; }
 
     [JsonPropertyName("first_name")]
     public string? FirstName { get; set; }
@@ -26,6 +27,13 @@ public class SignUpRequestModel
 
     [JsonPropertyName("middle_name")]
     public string? MiddleName { get; set; }
+
+    [JsonPropertyName("baptismal_name")]
+    public string? BaptismalName { get; set; }
+
+    [Phone]
+    [JsonPropertyName("phone_number")]
+    public string? PhoneNumber { get; set; }
 
     [JsonPropertyName("birthday")]
     public DateOnly? Birthday { get; set; }
