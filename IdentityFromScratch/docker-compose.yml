@@ -4,14 +4,21 @@ services:
     build: .
     container_name: IdentityFromScratch
     ports:
-      - "22000:22000"
-      - "10327:10327"
+      - "443:22000"
+      - "80:10327"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:22000;http://+:10327
+      - ASPNETCORE_HTTPS_PORTS=22000
+      - ASPNETCORE_HTTP_PORTS=10327
       - ConnectionStrings__DefaultConnection=${CONNECTION_STRING}
       - ConnectionStringProfile=${CONNECTION_STRING_PROFILE}
       - JwtSettings__AccessToken__SecretKey=${JWT_SECRET_KEY}
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     # Note: The JwtSettings environment variable should be set in your environment or .env file
+    volumes:
+      - ~/.aspnet/https:/https:ro
     depends_on:
       - postgres
   postgres:
