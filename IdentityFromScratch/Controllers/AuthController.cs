@@ -121,9 +121,68 @@ public class AuthController : ControllerBase
 
     // Update user information
 
-    // Password Reset
+    // Password Reset (For Logged user)
+    [HttpPost("change-password")]
+    [Authorize]
+    [ProducesResponseType(typeof(IdentityResult), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return Unauthorized(new ValidationProblemDetails(ModelState));
+        }
 
-    // Delete User Account
+        // Get the current user from JWT Bearer token
+        var user = await _signInManager.UserManager.GetUserAsync(User);
+        if (user is null)
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = "Invalid user.",
+            });
+        }
+
+        // Validation
+        // Check if the old password is correct
+        var checkPasswordResult = await _signInManager.UserManager.CheckPasswordAsync(user, request.OldPassword);
+        if (!checkPasswordResult)
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = "Invalid old password. Please check your password.",
+            });
+        }
+
+        // Check the old password and the new password is the same
+        var oldHash = _signInManager.UserManager.PasswordHasher.HashPassword(user, request.OldPassword);
+        var newHash = _signInManager.UserManager.PasswordHasher.HashPassword(user, request.NewPassword);
+        if (oldHash == newHash)
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = "The new password cannot be the same as the old password.",
+            });
+        }
+
+        // Change the password; Check the existing password
+        var result = await _signInManager.UserManager.ChangePasswordAsync(user, request.OldPassword,
+            request.NewPassword);
+
+        if (!result.Succeeded)
+        {
+            return Unauthorized(new ProblemDetails
+            {
+                Title = "Unauthorized",
+                Detail = "Invalid password. Please check your password.",
+            });
+        }
+
+        return new OkObjectResult(new { Message = "Password changed successfully." });
+    }
 
     private static ValidationProblemDetails CreateValidationProblemDetails(IdentityResult result)
     {
