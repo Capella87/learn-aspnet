@@ -12,7 +12,7 @@ using System.ComponentModel.DataAnnotations;
 namespace IdentityFromScratch.Controllers;
 
 [ApiController]
-[Route("/[controller]")]
+[Route("/auth")]
 public class AuthController : ControllerBase
 {
     private readonly SignInManager<User<int>> _signInManager;
@@ -33,7 +33,7 @@ public class AuthController : ControllerBase
     }
 
     // Login
-    [Route("/login")]
+    [Route("login")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(JwtTokenResponse), StatusCodes.Status200OK)]
     [HttpPost]
@@ -62,7 +62,7 @@ public class AuthController : ControllerBase
     // Logout
 
     // Sign Up
-    [HttpPost("/signup")]
+    [HttpPost("signup")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(IdentityResult), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
