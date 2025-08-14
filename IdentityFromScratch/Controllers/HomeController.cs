@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace IdentityFromScratch.Controllers;
 
+[ApiController]
 public class HomeController : ControllerBase
 {
     private readonly ILogger<HomeController> _logger;

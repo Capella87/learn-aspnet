@@ -33,10 +33,9 @@ public class AuthController : ControllerBase
     }
 
     // Login
-    [Route("login")]
+    [HttpPost("login")]
     [AllowAnonymous]
     [ProducesResponseType(typeof(JwtTokenResponse), StatusCodes.Status200OK)]
-    [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginRequestModel data)
     {
         if (HttpContext.User.Identity!.IsAuthenticated)
@@ -60,6 +59,20 @@ public class AuthController : ControllerBase
     }
 
     // Logout
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout()
+    {
+        if (!HttpContext.User.Identity!.IsAuthenticated)
+        {
+            return Problem("You're not authenticated.", statusCode: StatusCodes.Status400BadRequest);
+        }
+        // Sign out the user
+        // TODO: If the user has refresh token not expired, we should remove the refresh token from the database.
+        await _signInManager.SignOutAsync();
+        // Return a success response
+        return Ok(new { Message = "Logged out successfully." });
+    }
 
     // Sign Up
     [HttpPost("signup")]
@@ -181,7 +194,7 @@ public class AuthController : ControllerBase
             });
         }
 
-        return new OkObjectResult(new { Message = "Password changed successfully." });
+        return Ok(new { Message = "Password changed successfully." });
     }
 
     private static ValidationProblemDetails CreateValidationProblemDetails(IdentityResult result)
