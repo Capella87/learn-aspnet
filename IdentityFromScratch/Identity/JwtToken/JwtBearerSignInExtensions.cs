@@ -31,7 +31,7 @@ public static class JwtBearerSignInExtensions
         ArgumentNullException.ThrowIfNull(authenticationScheme);
         ArgumentNullException.ThrowIfNull(configureOptions);
 
-        builder.Services.TryAddScoped<ITokenService, JwtTokenService>();
+        builder.Services.TryAddScoped<ITokenService<JsonWebToken>, JwtTokenService>();
         builder.Services.AddSingleton<JsonWebTokenHandler>();
 
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IConfigureOptions<JwtBearerOptions>, JwtBearerSignInConfigureOptions>());

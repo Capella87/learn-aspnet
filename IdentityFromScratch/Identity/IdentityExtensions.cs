@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace IdentityFromScratch.Identity;
 
@@ -34,7 +35,6 @@ public static class IdentityExtensions
         where TUser : class
         where TRole : class
     {
-
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -105,7 +105,7 @@ public static class IdentityExtensions
         services.TryAddScoped<RoleManager<TRole>>();
 
         services.TryAddScoped<IRoleValidator<IdentityRole<int>>, RoleValidator<IdentityRole<int>>>();
-        services.TryAddScoped<ITokenService, JwtTokenService>();
+        services.TryAddScoped<ITokenService<JsonWebToken>, JwtTokenService>();
 
         // Email Verification and password reset
         services.TryAddTransient<IEmailSender, NoOpEmailSender>();

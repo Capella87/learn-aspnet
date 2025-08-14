@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using Npgsql.Internal;
@@ -19,7 +20,7 @@ namespace IdentityFromScratch.Identity.JwtToken;
 
 public class JwtBearerSignInHandler : JwtBearerHandler, IAuthenticationSignInHandler
 {
-    private ITokenService _tokenService => Context.RequestServices.GetRequiredService<ITokenService>();
+    private ITokenService<JsonWebToken> _tokenService => Context.RequestServices.GetRequiredService<ITokenService<JsonWebToken>>();
 
     private readonly IOptionsMonitor<JsonSerializerOptions> _serializerOptions;
 
@@ -61,11 +62,11 @@ public class JwtBearerSignInHandler : JwtBearerHandler, IAuthenticationSignInHan
         // We have to create a new token manually.
         try
         {
-            var token = _tokenService.GenerateAccessToken(user.Claims);
-            var refreshToken = _tokenService.GenerateRefreshToken();
+            var token = await _tokenService.GenerateAccessTokenAsync(user.Claims) as JwtToken;
+            var refreshToken = await _tokenService.GenerateRefreshTokenAsync() as RefreshToken;
 
-            var tokenResponse = JwtTokenResponse.CreateTokenResponse(token as JwtToken ?? throw new ArgumentNullException(nameof(token)),
-    refreshToken as RefreshToken);
+            var tokenResponse = JwtTokenResponse.CreateTokenResponse(token ?? throw new ArgumentNullException(nameof(token)),
+    refreshToken);
             await Context.Response.WriteAsJsonAsync(tokenResponse, _serializerOptions.Get("NoNullSerialization"));
         }
         catch (ArgumentNullException ex)

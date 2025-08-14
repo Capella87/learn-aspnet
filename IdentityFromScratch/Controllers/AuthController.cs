@@ -8,6 +8,7 @@ using IdentityFromScratch.Identity.Token;
 using IdentityFromScratch.Identity.JwtToken;
 using Microsoft.AspNetCore.Authorization;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace IdentityFromScratch.Controllers;
 
@@ -18,13 +19,13 @@ public class AuthController : ControllerBase
     private readonly SignInManager<User<int>> _signInManager;
     private readonly ILogger<AuthController> _logger;
     private readonly AppDbContext _dbContext;
-    private readonly ITokenService _tokenService;
+    private readonly ITokenService<JsonWebToken> _tokenService;
 
     private readonly EmailAddressAttribute _emailAttr = new();
     private readonly PhoneAttribute _phoneAttr = new();
 
     public AuthController(SignInManager<User<int>> signInManager, ILogger<AuthController> logger,
-        AppDbContext dbContext, ITokenService tokenService)
+        AppDbContext dbContext, ITokenService<JsonWebToken> tokenService)
     {
         _signInManager = signInManager ?? throw new ArgumentNullException(nameof(signInManager));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));

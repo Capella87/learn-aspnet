@@ -1,15 +1,16 @@
 using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 
 namespace IdentityFromScratch.Identity.Token;
 
-public interface ITokenService
+public interface ITokenService<T> where T : SecurityToken
 {
-    protected ILogger<ITokenService> Logger { get; }
+    protected ILogger<ITokenService<T>> Logger { get; }
 
-    public IToken<JsonWebToken> GenerateAccessToken(IEnumerable<Claim> claims);
+    public Task<IToken<T>> GenerateAccessTokenAsync(IEnumerable<Claim> claims);
 
-    public IToken GenerateRefreshToken();
+    public Task<IToken> GenerateRefreshTokenAsync();
 
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
+    public Task<ClaimsPrincipal?> GetPrincipalFromExpiredTokenAsync(string token);
 }
